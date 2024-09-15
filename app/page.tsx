@@ -9,6 +9,7 @@ import DashboardItem from "./components/DashboardItem"
 import TopBar from './components/TopBar';
 import SearchBar from './components/SearchBar';
 import UploadModal from './components/UploadModal';
+import './components/Dashboard.css'
 
 Amplify.configure(outputs);
 
