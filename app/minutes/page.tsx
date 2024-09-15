@@ -3,13 +3,22 @@
 import React, { useState } from 'react';
 import TopBar from './../components/TopBar';
 import SearchBar from './../components/SearchBar';
-import MinutesTable from './../components/MinutesTable';
+//import MinutesTable from './../components/MinutesTable';
 import Preview from './../components/Preview';
 import UploadModal from './../components/UploadModal';
 import Button from './../components/Button';
 import './Minutes.css';
+import { list } from 'aws-amplify/storage';
 
-export default function Minutes() {
+export default async function Minutes() {
+
+    const result = await list({
+      path: 'album/photos/',
+      options: {
+        listAll: true,
+      }
+    });
+    
     const [isModalOpen, setModalOpen] = useState(false);
 
     const handleOpenModal = () => {
@@ -36,9 +45,9 @@ export default function Minutes() {
                     >
                         アップロード...
                     </Button>
-                </div>
-                    <MinutesTable />
-                </div>
+                //</div>
+                //    <MinutesTable />
+                //</div>
                 <div className="right-section">
                     <Preview />
                 </div>
