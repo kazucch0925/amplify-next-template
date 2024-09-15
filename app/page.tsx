@@ -38,7 +38,6 @@ export default function App() {
                 <DashboardItem title="アップロード" icon="upload-icon.png" onClick={handleUploadButtonClick} />
                 <DashboardItem title="設定" icon="settings-icon.png" disabled />
               </div>
-            <button onClick={signOut}>Sign out</button>
             {isUploadModalOpen && <UploadModal onClose={handleCloseModal} />}
           </div>
         </main>

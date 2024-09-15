@@ -11,13 +11,17 @@ import './Minutes.css';
 import { list } from 'aws-amplify/storage';
 
 export default async function Minutes() {
-
-    const result = await list({
-      path: 'album/photos/',
-      options: {
-        listAll: true,
-      }
-    });
+    try {
+        const result = await list({
+            path: 'minutes/',
+            options: {
+                listAll: true,
+            },
+        });
+        console.log(result);
+    } catch (error) {
+        console.error("Error fetching minutes:", error);
+    }
     
     const [isModalOpen, setModalOpen] = useState(false);
 
