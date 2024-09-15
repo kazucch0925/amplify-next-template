@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import Button from './Button.js'
+import Button from './Button'
 import { FileUploader } from '@aws-amplify/ui-react-storage';
 import './UploadModal.css';
 
