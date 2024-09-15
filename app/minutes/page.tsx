@@ -6,7 +6,6 @@ import SearchBar from './../components/SearchBar';
 import MinutesTable from './../components/MinutesTable';
 import Preview from './../components/Preview';
 import UploadModal from './../components/UploadModal';
-import { DefaultFileUploaderExample } from '../upload/page';
 import Button from './../components/Button';
 import './Minutes.css';
 
