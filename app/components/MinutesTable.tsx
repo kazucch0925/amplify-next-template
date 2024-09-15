@@ -2,7 +2,15 @@
 'use client';
 
 import React from 'react';
+import { list } from 'aws-amplify/storage';
 import './MinutesTable.css';
+
+const result = await list({
+    path: 'minutes/',
+    options: {
+        listAll: true,
+    }
+});
 
 export default function MinutesTable() {
     const rows = [
