@@ -1,0 +1,12 @@
+.preview-container {
+  padding: 20px;
+  text-align: center;
+}
+
+.preview-container h3 {
+  margin-bottom: 20px;
+}
+
+.preview-container p {
+  color: #888;
+}

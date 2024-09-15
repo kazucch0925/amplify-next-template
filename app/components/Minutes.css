@@ -1,0 +1,93 @@
+html, body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+
+/* ページ全体 */
+.minutes-page-container {
+  padding: 0px;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* タイトル */
+h2 {
+  font-size: 24px;
+  font-weight: bold;
+  margin-bottom: 10px;
+  margin-top: 80px;
+  margin-left: 20px;
+  font: bold;
+}
+
+/* 表（左）とプレビュー表示部（右）の関係 */
+.content {
+  display: flex;
+  gap: 10px;
+  flex-grow: 1;
+}
+
+/* 表（左） */
+.left-section {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.search-upload-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.search-upload-container > * {
+  margin-right: 0px;
+}
+
+.search-upload-container .search-bar {
+  flex: 1;
+}
+
+/* アップロードボタン */
+.upload-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #5C6BC0; /* ボタンの背景色 */
+  color: white; /* テキストの色 */
+  border: none; /* 枠線なし */
+  padding: 10px 10px; /* 内側の余白 */
+  border-radius: 8px; /* 角の丸み */
+  font-size: 16px; /* テキストのサイズ */
+  cursor: pointer; /* ホバー時のカーソル */
+  transition: background-color 0.3s ease; /* ホバー時の色変化 */
+  margin-left: 10px;
+}
+
+.upload-button:hover {
+  background-color: #9FA8DA; /* ホバー時の背景色 */
+}
+
+.button-icon {
+  width: 28px;
+  height: 28px;
+  margin-right: 10px;
+}
+
+/* プレビュー表示部（右） */
+.right-section {
+  flex: 1;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  padding: 20px;
+  margin-right: 20px;
+  margin-left: 20px;
+  margin-bottom: 20px;
+  height: calc(100vh - 150px); /* ヘッダーと他の要素の高さを引いた分 */
+  display: flex;
+  flex-direction: column;
+}

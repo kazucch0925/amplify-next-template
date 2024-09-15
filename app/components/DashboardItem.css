@@ -1,0 +1,35 @@
+.dashboard-item {
+  display: flex;
+  flex-direction: row; /* 横方向に並べる */
+  align-items: center; /* 縦方向の中央に揃える */
+  padding: 20px;
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  cursor: pointer;
+  text-align: left;
+  transition: transform 0.2s ease;
+  width: 250px;
+  margin: 20px;
+}
+
+.dashboard-item:hover {
+  transform: scale(1.05);
+}
+
+.dashboard-item.disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.item-icon {
+  width: 40px;
+  height: 40px;
+  margin-right: 10px;
+}
+
+.item-title {
+  font-size: 20px;
+  margin: 0;
+  color: #5C6BC0;
+}

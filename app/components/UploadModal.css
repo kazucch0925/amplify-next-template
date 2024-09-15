@@ -1,0 +1,163 @@
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.modal-content {
+  background-color: white;
+  padding: 20px;
+  border-radius: 8px;
+  max-width: 600px;
+  width: 100%;
+  box-sizing: border-box;
+  position: relative;
+}
+
+.close-icon {
+  position: absolute;
+  top: -30px;
+  right:-30px;
+  margin-left: auto;
+  background: none;
+  border: none;
+  cursor: pointer;
+  width: 32px;
+  height: 32px;
+}
+
+h3 {
+  font-size: 20px;
+  font-family: bold;
+  margin-bottom: 10px;
+}
+
+/* ドラッグ＆ドロップのエリア全体 */
+.upload-area {
+  border: 2px dashed #5C6BC0;
+  padding: 30px;
+  text-align: center;
+  margin-bottom: 20px;
+  border-radius: 8px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  height: 250px;
+  max-width: 500px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* ドラッグオーバー時のスタイル */
+.upload-area:hover, 
+.upload-area:focus,
+.upload-area.dragging {
+  background-color: #e0e0e0; /* ドラッグオーバー時に色を変更 */
+  border-color: #3f51b5; /* ドラッグオーバー時にボーダー色を変更 */
+}
+
+.file-input {
+  display: none;
+}
+
+.file-label {
+  display: block;
+  cursor: pointer;
+}
+
+.upload-instructions {
+  font-size: 16px;
+  color: #555;
+  text-align: center;
+}
+
+/* ファイル選択ボタン */
+.select-file-button {
+  margin-top: 10px;
+  margin-left: auto;
+  margin-right: auto;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+}
+
+/* 選択されたファイルリスト全体のスタイル */
+.upload-file-list {
+  margin-top: 10px;
+  display: flex;
+  flex-wrap: wrap; /* 複数行に渡ってアイテムを表示させる */
+  justify-content: space-between; /* アイテムを均等に配置 */
+  gap: 4px; /* 各アイテムの間に隙間を設ける */
+}
+
+/* 個別のファイル（アイコン部分も含む） */
+.upload-file-info {
+  display: inline-flex;
+  align-items: center;
+  margin: 4px 0;
+  font-size: 14px;
+  color: #333;
+  border: 1px solid #aaaaaa;
+  padding: 5px;
+  border-radius: 8px;
+  background-color: #eeeaea;
+  width: 100%;
+  max-width: 260px;
+}
+
+/* ファイル名が長すぎる場合に省略表示 */
+.upload-file-info span {
+  overflow: hidden; /* 溢れた部分を隠す */
+  text-overflow: ellipsis; /* 溢れた部分を「...」で表示 */
+  white-space: nowrap; /* テキストを1行に固定 */
+  flex-grow: 1;
+  margin-right: 8px; /* アイコンとの間隔を保つため */
+  max-width: 100%; /* 親要素内での最大幅を指定 */
+}
+
+/* ファイルアイコン */
+.minutes-black-icon {
+  width: 24px;
+  height: 24px;
+  margin-left: 0px;
+  margin-right: 0px;
+}
+
+/* 削除アイコン */
+.delete-black-icon {
+  width: 24px;
+  height: 24px;
+  margin-left: 4px;
+  cursor: pointer;
+  transition: opacity 0.3s ease;
+  opacity: 0.3;
+}
+
+/* ファイル名が省略されている場合に、ツールチップを表示 */
+.upload-file-info[title]:hover::after {
+  content: attr(title);
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  bottom: -24px;
+  background-color: #333;
+  color: #fff;
+  padding: 4px 8px;
+  border-radius: 4px;
+  white-space: nowrap;
+  z-index: 10;
+}
+
+/* アップロードボタン */
+.upload-modal-button {
+  margin-left: auto;
+  margin-top: 10px;
+}

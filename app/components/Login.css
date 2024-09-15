@@ -1,0 +1,89 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html, body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+/* ログイン画面全体 */
+.login-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    height: 100vh;
+    padding: 0px;
+    margin-top: 0px;
+  }
+  
+  /* ログインのボックスコンポーネント */
+  .login-box {
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+    width: 380px;
+    height: auto;
+    margin-top: 120px;
+  }
+
+  /* ログインボックスのダークモード */
+  @media (prefers-color-scheme: dark) {
+    .login-box {
+      background-color: rgba(50, 50, 50, 0.9); /* ダークモード用の背景色 */
+      box-shadow: 0px 0px 10px rgba(255, 255, 255, 0.1); /* ダークモード用の影 */
+    }
+  }
+  
+  .login-box h2 {
+    text-align: center;
+    margin-bottom: 20px;
+    font-size: 28px;
+    font-weight: bold;
+  }
+  
+  /* ラベル + テキストボックス */
+  .input-group {
+    margin-bottom: 20px;
+  }
+  
+  /* ラベル */
+  .input-group label {
+    display: block;
+    font-size: 16px;
+    margin-bottom: 5px;
+    text-align: left;
+  }
+  
+  /* テキストボックス */
+  .input-group input {
+    width: 100%;
+    padding: 8px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+  }
+  
+  /* ログインボタン */
+  .login-button {
+    width: 100%;
+    padding: 10px;
+    border: none;
+    border-radius: 5px;
+    background-color: #5C6BC0;
+    color: white;
+    font-size: 16px; /* ボタンラベル */
+    cursor: pointer;
+    display: flex;
+    align-items: center; /* 上下中央揃え */
+    justify-content: center; /* 左右中央揃え */
+    height: 40px;
+    margin-top: 30px;
+  }
+  
+  /* ログインボタンのホバー時 */
+  .login-button:hover {
+    background-color: #7986CB;
+  }  

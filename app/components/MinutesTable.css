@@ -1,0 +1,22 @@
+.minutes-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 20px;
+}
+
+.minutes-table th,
+.minutes-table td {
+  border: 2px solid #ddd;
+  padding: 8px;
+  text-align: left;
+}
+
+.minutes-table th {
+  background-color: #C5CAE9;
+  font-weight: bold;
+}
+
+.icon-button {
+  width: 36px;
+  height: 36px;
+}

@@ -1,15 +1,14 @@
 "use client";
 
-
 import { Authenticator } from '@aws-amplify/ui-react'
 import '@aws-amplify/ui-react/styles.css'
 import { useState, useEffect } from "react";
 import { generateClient } from "aws-amplify/data";
 import type { Schema } from "@/amplify/data/resource";
-import "./../app/app.css";
 import { Amplify } from "aws-amplify";
 import outputs from "@/amplify_outputs.json";
 import "@aws-amplify/ui-react/styles.css";
+import DashboardItem from "./components/DashboardItem"
 
 Amplify.configure(outputs);
 
@@ -42,7 +41,13 @@ export default function App() {
     <Authenticator>
       {({ signOut, user }) => (
         <main>
-          <h1>{user?.signInDetails?.loginId}'s todos</h1>
+          <h1>ダッシュボード</h1>
+          <div className="dashboard-items">
+            <DashboardItem title="Wiki" icon="wiki-icon.png" disabled /*link="/wiki" *//>
+            <DashboardItem title="議事録" icon="minutes-icon.png" link="/minutes" />
+            //<DashboardItem title="アップロード" icon="upload-icon.png" link="/upload" /*onClick={handleUploadButtonClick}*/ />
+            <DashboardItem title="設定" icon="settings-icon.png" disabled />
+          </div>
           <button onClick={createTodo}>+ new</button>
           <ul>
             {todos.map((todo) => (
@@ -51,13 +56,6 @@ export default function App() {
               key={todo.id}>{todo.content}</li>
             ))}
           </ul>
-          <div>
-            🥳 App successfully hosted. Try creating a new todo.
-            <br />
-            <a href="https://docs.amplify.aws/nextjs/start/quickstart/nextjs-app-router-client-components/">
-              Review next steps of this tutorial.
-            </a>
-          </div>
           <button onClick={signOut}>Sign out</button>
         </main>
       )}

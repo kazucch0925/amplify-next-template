@@ -1,0 +1,54 @@
+.custom-button {
+  display: flex;
+  padding: 10px 10px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+/* プライマリボタン */
+.custom-button.primary {
+  color: white;
+  background-color: #5C6BC0;
+}
+
+.custom-button.primary:hover {
+  background-color: #9FA8DA;
+}
+
+/* セカンダリボタン */
+.custom-button.secondary {
+  color: black;
+  background-color: white;
+  border: 1px solid currentColor;
+}
+
+.custom-button.secondary:hover {
+  background-color: #aaa;
+}
+
+/* アウトライン表示のボタン */
+.custom-button.outline {
+  background-color: transparent;
+  border: 0.5px solid currentColor;
+  color: inherit;
+  color: #5C6BC0;
+}
+
+.custom-button.outline:hover {
+  background-color: #9FA8DA;
+}
+
+/* アイコンスタイル */
+.button-icon {
+  margin-right: 10px;
+  width: 28px;
+  height: 28px;
+}
+
+/* ボタン非活性時 */
+.custom-button:disabled {
+  background-color: #ccc; /* ボタンが非活性化されたときの背景色 */
+  cursor: not-allowed;    /* 非活性化されたときのカーソル */
+}
