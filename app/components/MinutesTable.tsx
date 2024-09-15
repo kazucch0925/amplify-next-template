@@ -3,8 +3,8 @@
 
 import { list } from 'aws-amplify/storage';
 
-export const result = await list({
-	path: 'minutes/',
+const result = await list({
+	path: 'minuites/',
   // Alternatively, path: ({identityId}) => `album/{identityId}/photos/`,
   options: {
     listAll: true,

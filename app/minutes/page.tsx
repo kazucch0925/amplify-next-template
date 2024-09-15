@@ -45,9 +45,9 @@ export default async function Minutes() {
                     >
                         アップロード...
                     </Button>
-                //</div>
-                //    <MinutesTable />
-                //</div>
+                </div>
+                    
+                </div>
                 <div className="right-section">
                     <Preview />
                 </div>
