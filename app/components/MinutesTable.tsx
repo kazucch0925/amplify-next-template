@@ -2,7 +2,7 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
-import { list, ListAllWithPathOutput, downloadData } from 'aws-amplify/storage';
+import { list, ListAllWithPathOutput, downloadData, remove } from 'aws-amplify/storage';
 import { StorageImage } from '@aws-amplify/ui-react-storage';
 import './MinutesTable.css';
 
@@ -33,6 +33,19 @@ export default function MinutesTable() {
     fetchData();
   }, []);
 
+  const deleteFile = async (path: string) => {
+    try {
+        await remove({
+            path,
+        });
+        console.log('Deleted file: ${path}');
+        const newMinutes = minutes.filter(item => item.path != path);
+        setMinutes(newMinutes);
+    } catch (error) {
+        console.error("Error deleting file:", error);
+    }
+  }
+
   return (
     <div className='minutes-table-container'>
         <div className='minutes-table'>
@@ -42,7 +55,8 @@ export default function MinutesTable() {
                 <th>ファイル名</th>
                 <th>更新日</th>
                 <th>サイズ</th>
-                <th>DL</th>
+                <th>ダウンロード</th>
+                <th>削除</th>
             </tr>
             </thead>
             <tbody>
@@ -54,6 +68,11 @@ export default function MinutesTable() {
                 <td>
                     <button onClick={() => downloadFile(minute.path)} className="icon-button">
                     <img src="/icons/download.png" alt="Download" />
+                    </button>
+                </td>
+                <td>
+                    <button onClick={() => deleteFile(minute.path)} className="icon-button">
+                        <img src="/icons/delete.png" alt="Delete" />
                     </button>
                 </td>
                 </tr>
