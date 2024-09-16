@@ -1,7 +1,12 @@
+.minutes-table-container {
+  overflow-y: auto;
+  height: 800px
+}
+
 .minutes-table {
-  width: 100%;
   border-collapse: collapse;
   margin: 20px;
+  height: 100%;
 }
 
 .minutes-table th,
@@ -14,6 +19,9 @@
 .minutes-table th {
   background-color: #C5CAE9;
   font-weight: bold;
+  position: sticky;
+  top: 0;
+  z-index: 1;
 }
 
 .icon-button img {

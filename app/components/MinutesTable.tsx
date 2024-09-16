@@ -40,9 +40,9 @@ export default function MinutesTable() {
             <thead>
             <tr>
                 <th>ファイル名</th>
-                <th>最終更新日時</th>
+                <th>更新日</th>
                 <th>サイズ</th>
-                <th>ダウンロード</th>
+                <th>DL</th>
             </tr>
             </thead>
             <tbody>
