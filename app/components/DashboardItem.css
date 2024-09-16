@@ -3,7 +3,7 @@
   flex-direction: row; /* 横方向に並べる */
   align-items: center; /* 縦方向の中央に揃える */
   padding: 20px;
-  background-color: white;
+  background-color: #E8EAF6;
   border-radius: 8px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   cursor: pointer;

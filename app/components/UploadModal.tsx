@@ -24,7 +24,7 @@ export default function UploadModal({ onClose, onUploadComplete }: UploadModalPr
   return (
     <div className="modal-overlay" onClick={onClose}>
       <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-        <button className="close-icon" onClick={onClose} aria-label="Close">
+        <button className="close-icon" onClick={onClose}>
           <img src='/icons/close-white-icon.png' alt='Close' />
         </button>
         <h3>議事録アップロード</h3>
