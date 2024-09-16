@@ -3,25 +3,13 @@
 import React, { useState } from 'react';
 import TopBar from './../components/TopBar';
 import SearchBar from './../components/SearchBar';
-//import MinutesTable from './../components/MinutesTable';
+import MinutesTable from './../components/MinutesTable';
 import Preview from './../components/Preview';
 import UploadModal from './../components/UploadModal';
 import Button from './../components/Button';
 import './Minutes.css';
-import { list } from 'aws-amplify/storage';
 
-export default async function Minutes() {
-    try {
-        const result = await list({
-            path: 'minutes/',
-            options: {
-                listAll: true,
-            },
-        });
-        console.log(result);
-    } catch (error) {
-        console.error("Error fetching minutes:", error);
-    }
+export default function Minutes() {
     
     const [isModalOpen, setModalOpen] = useState(false);
 
@@ -50,7 +38,7 @@ export default async function Minutes() {
                         アップロード...
                     </Button>
                 </div>
-                    
+                    <MinutesTable />
                 </div>
                 <div className="right-section">
                     <Preview />
