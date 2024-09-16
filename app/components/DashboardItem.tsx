@@ -1,5 +1,5 @@
 import React from 'react';
-//import './DashboardItem.css';
+import './DashboardItem.css';
 import Link from 'next/link';
 
 export default function DashboardItem({
