@@ -3,6 +3,7 @@
 
 import React, { useEffect, useState } from 'react';
 import { list, ListAllWithPathOutput } from 'aws-amplify/storage';
+import './MinutesTable.css';
 
 type StorageListOutput = ListAllWithPathOutput['items'];
 
@@ -32,7 +33,6 @@ export default function MinutesTable() {
 
   return (
     <div className='minutes-table'>
-      <h2>Fetched Minutes:</h2>
       <table>
         <thead>
           <tr>
