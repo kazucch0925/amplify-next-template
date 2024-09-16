@@ -22,7 +22,7 @@ export default function MinutesTable() {
 
         console.log('Fetched data:', JSON.stringify(result, null, 2));
 
-        const filteredItems = result.items.filter(item => item.path.endsWith('/'));
+        const filteredItems = result.items.filter(item => !item.path.endsWith('/') && item.path.startsWith('minutes/'));
         setMinutes(filteredItems);
       } catch (error) {
         console.error("Error fetching minutes:", error);
@@ -40,14 +40,11 @@ export default function MinutesTable() {
             <th>ファイル名</th>
             <th>最終更新日時</th>
             <th>サイズ</th>
-            <th>ダウンロード</th>            
+            <th>ダウンロード</th>
           </tr>
         </thead>
         <tbody>
           {minutes.map((minute) => (
-            minute.path.endsWith('/')
-              ? null
-              : (
             <tr key={minute.path}>
               <td>{minute.path.replace(/^minutes\/|\\/g, '')}</td>
               <td>{minute.lastModified ? new Date(minute.lastModified).toLocaleDateString() : ''}</td>
@@ -58,7 +55,6 @@ export default function MinutesTable() {
                 </button>
               </td>
             </tr>
-              )
           ))}
         </tbody>
       </table>
@@ -74,7 +70,8 @@ async function downloadFile(path: string) {
         }) as any;
 
         const fileName = path.split('/').pop() || '';
-        const blob = new Blob([await result.body.arrayBuffer()], { type: 'application/octet-stream' });
+        
+        const blob = new Blob([result.body.arrayBuffer()], { type: 'application/octet-stream' });
         const url = window.URL.createObjectURL(blob);
         
         const a = document.createElement('a');
