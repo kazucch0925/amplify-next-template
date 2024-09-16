@@ -3,12 +3,11 @@
 
 import React, { useEffect, useState } from 'react';
 import { list, ListAllWithPathOutput, downloadData, remove } from 'aws-amplify/storage';
-import { StorageImage } from '@aws-amplify/ui-react-storage';
 import './MinutesTable.css';
 
 type StorageListOutput = ListAllWithPathOutput['items'];
 
-export default function MinutesTable() {
+export default function MinutesTable({ key }: { key: number }) {
   const [minutes, setMinutes] = useState<StorageListOutput>([]);
 
   useEffect(() => {
@@ -31,18 +30,21 @@ export default function MinutesTable() {
     };
 
     fetchData();
-  }, []);
+  }, [key]);
 
   const deleteFile = async (path: string) => {
-    try {
-        await remove({
-            path,
-        });
-        console.log('Deleted file: ${path}');
-        const newMinutes = minutes.filter(item => item.path != path);
-        setMinutes(newMinutes);
-    } catch (error) {
-        console.error("Error deleting file:", error);
+    if (window.confirm('次のファイルを削除してもよろしいですか？: ${path}')) {
+        try {
+            await remove({
+                path,
+            });
+            console.log('Deleted file: ${path}');
+            const newMinutes = minutes.filter(item => item.path != path);
+            setMinutes(newMinutes);
+        } catch (error) {
+            console.error("Error deleting file:", error);
+            alert('ファイルの削除に失敗しました。再度実行してください。');
+        }
     }
   }
 
@@ -67,12 +69,12 @@ export default function MinutesTable() {
                 <td>{minute.size} bytes</td>
                 <td>
                     <button onClick={() => downloadFile(minute.path)} className="icon-button">
-                    <img src="/icons/download.png" alt="Download" />
+                    <img src="/icons/download-icon.png" alt="Download" />
                     </button>
                 </td>
                 <td>
                     <button onClick={() => deleteFile(minute.path)} className="icon-button">
-                        <img src="/icons/delete.png" alt="Delete" />
+                        <img src="/icons/delete-icon.png" alt="Delete" />
                     </button>
                 </td>
                 </tr>
@@ -105,3 +107,4 @@ async function downloadFile(path: string) {
         console.error("Error downloading file:", error);
     }
 }
+

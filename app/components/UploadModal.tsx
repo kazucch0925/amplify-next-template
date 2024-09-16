@@ -2,15 +2,30 @@ import React, { useState } from 'react';
 import Button from './Button'
 import { FileUploader } from '@aws-amplify/ui-react-storage';
 import './UploadModal.css';
+import { remove } from 'aws-amplify/storage';
 
-export default function UploadModal({ onClose }: { onClose: () => void }) {
+interface UploadModalProps {
+  onClose: () => void;
+  onUploadComplete: () => void;
+}
+
+export default function UploadModal({ onClose, onUploadComplete }: UploadModalProps) {
     const [hasFile, setHasFile] = useState(false);
+
+    const handleUploadComplete = () => {
+      console.log('handleUploadComplete called');
+      onClose();
+
+      if (onUploadComplete) {
+        onUploadComplete();
+      }
+    }
 
   return (
     <div className="modal-overlay" onClick={onClose}>
       <div className="modal-content" onClick={(e) => e.stopPropagation()}>
         <button className="close-icon" onClick={onClose} aria-label="Close">
-        <img src='/icons/close-white-icon.png' alt='Close' />
+          <img src='/icons/close-white-icon.png' alt='Close' />
         </button>
         <h3>議事録アップロード</h3>
         <FileUploader
@@ -20,7 +35,9 @@ export default function UploadModal({ onClose }: { onClose: () => void }) {
           maxFileSize={10000}
           onUploadSuccess={(result: any) => {
             console.log(result);
-            onClose();
+            deleteTempFile(result.path).then(() => {
+              handleUploadComplete();
+            });
           }}
         />
         <Button
@@ -34,4 +51,15 @@ export default function UploadModal({ onClose }: { onClose: () => void }) {
       </div>
     </div>
   );
+}
+
+async function deleteTempFile(path: string) {
+  try {
+    await remove({
+      path,
+    });
+    console.log(`Deleted temp file: ${path}`);
+  } catch (error) {
+    console.error("Error deleting temp file:", error);
+  }
 }

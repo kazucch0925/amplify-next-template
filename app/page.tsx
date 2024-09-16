@@ -38,7 +38,7 @@ export default function App() {
                 <DashboardItem title="アップロード" icon="upload-icon.png" onClick={handleUploadButtonClick} />
                 <DashboardItem title="設定" icon="settings-icon.png" disabled />
               </div>
-            {isUploadModalOpen && <UploadModal onClose={handleCloseModal} />}
+            {isUploadModalOpen && <UploadModal onClose={handleCloseModal} onUploadComplete={() => null}/>}
           </div>
         </main>
       )}

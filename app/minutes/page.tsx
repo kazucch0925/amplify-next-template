@@ -16,14 +16,20 @@ import outputs from "@/amplify_outputs.json";
 Amplify.configure(outputs);
 
 export default function Minutes() {
-    
     const [isModalOpen, setModalOpen] = useState(false);
+    const [minutesListKey, setMinutesListKey] = useState(0);
+
     const handleOpenModal = () => {
         setModalOpen(true);
     };
 
     const handleCloseModal = () => {
         setModalOpen(false);
+    };
+
+    const handleRefreshMinutes = () => {
+        // MinutesTable の再描画をトリガーするために、key を更新
+        setMinutesListKey(prevKey => prevKey + 1);
     };
 
     return (
@@ -38,7 +44,9 @@ export default function Minutes() {
                                 <div className="search-upload-container">
                                     <SearchBar placeholder="議事録を検索..." />
                                     <Button
-                                        onClick={handleOpenModal}
+                                        onClick={() => {
+                                            handleOpenModal();
+                                        }}
                                         className="upload-button"
                                         iconSrc={"/icons/upload-white-icon.png"}
                                         altText={"Upload-icon"}
@@ -46,13 +54,13 @@ export default function Minutes() {
                                         アップロード...
                                     </Button>
                                 </div>
-                                    <MinutesTable />
+                                    <MinutesTable key={minutesListKey} />
                             </div>
                             <div className="right-section">
                                     <Preview />
                             </div>
                         </div>
-                        {isModalOpen && <UploadModal onClose={handleCloseModal} />}
+                        {isModalOpen && <UploadModal onClose={handleCloseModal} onUploadComplete={handleRefreshMinutes}/>}
                     </div>
                 </main>
             )}
