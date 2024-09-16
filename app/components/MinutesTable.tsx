@@ -66,18 +66,16 @@ async function downloadFile(path: string) {
     try {
         const result = await downloadData({
             path,
-            options: {},
-        }) as any;
+        }).result;
 
-        const fileName = path.split('/').pop() || '';
         
-        const blob = new Blob([result.body.arrayBuffer()], { type: 'application/octet-stream' });
-        const url = window.URL.createObjectURL(blob);
+        const blob = result.body.blob();
+        const url = window.URL.createObjectURL(await blob);
         
         const a = document.createElement('a');
         a.style.display = 'none';
         a.href = url;
-        a.download = fileName;
+        a.download = path.split('/').pop() || '';
         document.body.appendChild(a);
         a.click();
         window.URL.revokeObjectURL(url);
