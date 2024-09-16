@@ -21,10 +21,10 @@
   position: relative;
 }
 
-.close-icon {
+.close-icon img {
   position: absolute;
-  top: -30px;
-  right:-30px;
+  top: -5px;
+  right:-5px;
   margin-left: auto;
   background: none;
   border: none;
