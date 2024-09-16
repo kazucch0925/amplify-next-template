@@ -4,6 +4,7 @@
 import React, { useEffect, useState } from 'react';
 import { list, ListAllWithPathOutput, downloadData } from 'aws-amplify/storage';
 import { StorageImage } from '@aws-amplify/ui-react-storage';
+import './MinutesTable.css';
 
 type StorageListOutput = ListAllWithPathOutput['items'];
 
@@ -50,8 +51,8 @@ export default function MinutesTable() {
               <td>{minute.lastModified ? new Date(minute.lastModified).toLocaleDateString() : ''}</td>
               <td>{minute.size} bytes</td>
               <td>
-                <button onClick={() => downloadFile(minute.path)}>
-                  <StorageImage alt="download" path={minute.path} />
+                <button onClick={() => downloadFile(minute.path)} className="icon-button">
+                  <img src="/icons/download.png" alt="Download" />
                 </button>
               </td>
             </tr>
