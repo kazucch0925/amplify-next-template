@@ -49,7 +49,7 @@ export default function Minutes() {
                                     <Preview />
                             </div>
                         </div>
-                        //{isModalOpen && <UploadModal onClose={handleCloseModal} />}
+                        {isModalOpen && <UploadModal onClose={handleCloseModal} />}
                     </div>
                 </main>
             )}
