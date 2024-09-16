@@ -23,6 +23,7 @@ export default function MinutesTable({ key }: { key: number }) {
         console.log('Fetched data:', JSON.stringify(result, null, 2));
 
         const filteredItems = result.items.filter(item => !item.path.endsWith('/') && item.path.startsWith('minutes/'));
+        const sortedMinutes = sortMinutesByDate(filteredItems);
         setMinutes(filteredItems);
       } catch (error) {
         console.error("Error fetching minutes:", error);
@@ -47,6 +48,13 @@ export default function MinutesTable({ key }: { key: number }) {
         }
     }
   }
+
+  const sortMinutesByDate = (minutes: StorageListOutput) =>
+    [...minutes].sort((a, b) => {
+        const dateA = new Date(a.lastModified ?? '').getTime();
+        const dateB = new Date(b.lastModified ?? '').getTime();
+        return dateB - dateA;
+    });
 
   return (
     <div className='minutes-table-container'>
