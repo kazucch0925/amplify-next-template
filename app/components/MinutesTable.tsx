@@ -34,7 +34,7 @@ export default function MinutesTable({ key }: { key: number }) {
   }, [key]);
 
   const deleteFile = async (path: string) => {
-    if (window.confirm('次のファイルを削除してもよろしいですか？: ${path}')) {
+    if (window.confirm('次のファイルを削除してもよろしいですか？:</br>' + {path})) {
         try {
             await remove({
                 path,
