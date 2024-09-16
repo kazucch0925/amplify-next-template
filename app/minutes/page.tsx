@@ -10,11 +10,14 @@ import Preview from './../components/Preview';
 import UploadModal from './../components/UploadModal';
 import Button from './../components/Button';
 import './Minutes.css';
+import { Amplify } from 'aws-amplify';
+import outputs from "@/amplify_outputs.json";
+
+Amplify.configure(outputs);
 
 export default function Minutes() {
     
     const [isModalOpen, setModalOpen] = useState(false);
-
     const handleOpenModal = () => {
         setModalOpen(true);
     };
