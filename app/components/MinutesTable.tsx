@@ -36,15 +36,15 @@ export default function MinutesTable() {
       <table>
         <thead>
           <tr>
-            <th>Path</th>
-            <th>Last Modified</th>
-            <th>Size</th>
+            <th>ファイル名</th>
+            <th>最終更新日時</th>
+            <th>サイズ</th>
           </tr>
         </thead>
         <tbody>
           {minutes.map((minute) => (
             <tr key={minute.path}>
-              <td>{minute.path}</td>
+              <td>{minute.path.replace(/^minutes\/|\\/g, '')}</td>
               <td>{minute.lastModified ? new Date(minute.lastModified).toLocaleDateString() : ''}</td>
               <td>{minute.size} bytes</td>
             </tr>
