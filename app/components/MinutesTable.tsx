@@ -22,7 +22,8 @@ export default function MinutesTable() {
 
         console.log('Fetched data:', JSON.stringify(result, null, 2));
 
-        setMinutes(result.items);
+        const filteredItems = result.items.filter(item => item.path.endsWith('/'));
+        setMinutes(filteredItems);
       } catch (error) {
         console.error("Error fetching minutes:", error);
       }
