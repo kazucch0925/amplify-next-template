@@ -21,8 +21,7 @@ export default function MinutesTable() {
 
         console.log('Fetched data:', JSON.stringify(result, null, 2));
 
-        setMinutes(result.items as unknown as StorageListOutput);
-        console.log(result);
+        setMinutes(result.items);
       } catch (error) {
         console.error("Error fetching minutes:", error);
       }
@@ -34,7 +33,24 @@ export default function MinutesTable() {
   return (
     <div className='minutes-table'>
       <h2>Fetched Minutes:</h2>
-      <pre>{JSON.stringify(minutes, null, 2)}</pre>
+      <table>
+        <thead>
+          <tr>
+            <th>Path</th>
+            <th>Last Modified</th>
+            <th>Size</th>
+          </tr>
+        </thead>
+        <tbody>
+          {minutes.map((minute) => (
+            <tr key={minute.path}>
+              <td>{minute.path}</td>
+              <td>{minute.lastModified ? new Date(minute.lastModified).toLocaleDateString() : ''}</td>
+              <td>{minute.size} bytes</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
     </div>
   );
 }
