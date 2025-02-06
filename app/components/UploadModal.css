@@ -21,14 +21,17 @@
   position: relative;
 }
 
-.close-icon img {
+.close-icon {
   position: absolute;
   top: -5px;
-  right:-5px;
-  margin-left: auto;
+  right: -5px;
   background: none;
   border: none;
   cursor: pointer;
+  padding: 0;
+}
+
+.close-icon img {
   width: 32px;
   height: 32px;
 }
