@@ -23,11 +23,9 @@ export default function UploadModal({ onClose, onUploadComplete }: UploadModalPr
 
   return (
     <div className="modal-overlay" onClick={onClose}>
-      <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-        <button className="close-icon" onClick={onClose}>
-          <img src='/icons/close-white-icon.png' alt='Close' />
-        </button>
-        <h3>議事録アップロード</h3>
+      <div className="modal-container">
+        <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+          <h3>議事録アップロード</h3>
         <FileUploader
           acceptedFileTypes={[".pdf,.doc,.docx,.txt"]}
           path="minutes/"
@@ -48,6 +46,10 @@ export default function UploadModal({ onClose, onUploadComplete }: UploadModalPr
         >
           アップロード
         </Button>
+        </div>
+        <button className="close-icon" onClick={onClose}>
+          <img src='/icons/close-white-icon.png' alt='Close' />
+        </button>
       </div>
     </div>
   );
