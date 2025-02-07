@@ -27,8 +27,37 @@ export default function Preview({ selectedPath }: PreviewProps) {
                 }).result;
                 
                 const blob = await result.body.blob();
-                const text = await blob.text();
-                setContent(text);
+                const reader = new FileReader();
+                
+                reader.onload = (e) => {
+                    if (e.target?.result) {
+                        // まずUTF-8として試行
+                        try {
+                            const decoder = new TextDecoder('utf-8');
+                            const uint8Array = new Uint8Array(e.target.result as ArrayBuffer);
+                            const text = decoder.decode(uint8Array);
+                            setContent(text);
+                        } catch (error) {
+                            // UTF-8で失敗した場合、Shift-JISとして試行
+                            try {
+                                const decoder = new TextDecoder('shift-jis');
+                                const uint8Array = new Uint8Array(e.target.result as ArrayBuffer);
+                                const text = decoder.decode(uint8Array);
+                                setContent(text);
+                            } catch (shiftJisError) {
+                                console.error("Error decoding file:", shiftJisError);
+                                setError('ファイルの読み込みに失敗しました。');
+                            }
+                        }
+                    }
+                };
+
+                reader.onerror = () => {
+                    console.error("Error reading file");
+                    setError('ファイルの読み込みに失敗しました。');
+                };
+
+                reader.readAsArrayBuffer(blob);
             } catch (error) {
                 console.error("Error fetching file content:", error);
                 setError('ファイルの読み込みに失敗しました。');
