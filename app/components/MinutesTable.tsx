@@ -7,8 +7,14 @@ import './MinutesTable.css';
 
 type StorageListOutput = ListAllWithPathOutput['items'];
 
-export default function MinutesTable({ key }: { key: number }) {
+interface MinutesTableProps {
+  key: number;
+  onSelectMinute: (path: string) => void;
+}
+
+export default function MinutesTable({ key, onSelectMinute }: MinutesTableProps) {
   const [minutes, setMinutes] = useState<StorageListOutput>([]);
+  const [selectedPath, setSelectedPath] = useState<string>('');
 
   useEffect(() => {
     const fetchData = async () => {
@@ -62,6 +68,7 @@ export default function MinutesTable({ key }: { key: number }) {
         <table>
             <thead>
             <tr>
+                <th>選択</th>
                 <th>ファイル名</th>
                 <th>更新日</th>
                 <th>サイズ</th>
@@ -72,6 +79,17 @@ export default function MinutesTable({ key }: { key: number }) {
             <tbody>
             {minutes.map((minute) => (
                 <tr key={minute.path}>
+                <td>
+                    <input
+                        type="radio"
+                        name="minuteSelection"
+                        checked={selectedPath === minute.path}
+                        onChange={() => {
+                            setSelectedPath(minute.path);
+                            onSelectMinute(minute.path);
+                        }}
+                    />
+                </td>
                 <td>{minute.path.replace(/^minutes\/|\\/g, '')}</td>
                 <td>{minute.lastModified ? new Date(minute.lastModified).toLocaleDateString() : ''}</td>
                 <td>{minute.size} bytes</td>
@@ -115,4 +133,3 @@ async function downloadFile(path: string) {
         console.error("Error downloading file:", error);
     }
 }
-

@@ -18,6 +18,7 @@ Amplify.configure(outputs);
 export default function Minutes() {
     const [isModalOpen, setModalOpen] = useState(false);
     const [minutesListKey, setMinutesListKey] = useState(0);
+    const [selectedMinutePath, setSelectedMinutePath] = useState<string | null>(null);
 
     const handleOpenModal = () => {
         setModalOpen(true);
@@ -54,10 +55,13 @@ export default function Minutes() {
                                         アップロード...
                                     </Button>
                                 </div>
-                                    <MinutesTable key={minutesListKey} />
+                                    <MinutesTable 
+                                        key={minutesListKey} 
+                                        onSelectMinute={(path) => setSelectedMinutePath(path)}
+                                    />
                             </div>
                             <div className="right-section">
-                                    <Preview />
+                                    <Preview selectedPath={selectedMinutePath} />
                             </div>
                         </div>
                         {isModalOpen && <UploadModal onClose={handleCloseModal} onUploadComplete={handleRefreshMinutes}/>}
