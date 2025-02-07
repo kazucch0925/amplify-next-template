@@ -14,7 +14,16 @@
 .modal-container {
   position: relative;
   max-width: 600px;
-  width: 100%;
+  width: calc(100% - 100px);
+  margin: 0 50px;
+  min-width: 280px;
+}
+
+@media screen and (max-width: 480px) {
+  .modal-container {
+    margin: 0 60px;
+    width: calc(100% - 120px);
+  }
 }
 
 .modal-content {
