@@ -1,15 +1,17 @@
 .minutes-table-container {
   overflow-y: auto;
-  height: 800px
+  overflow-x: auto;
+  height: 100%;
+  width: 100%;
 }
 
 .minutes-table {
   border-collapse: collapse;
-  margin-right: 20px;
-  margin-left: 20px;
   margin-bottom: 20px;
   margin-top: -10px;
   height: 100%;
+  width: 100%;
+  min-width: 600px;
 }
 
 .minutes-table th,
