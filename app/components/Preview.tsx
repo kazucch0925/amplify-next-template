@@ -27,37 +27,44 @@ export default function Preview({ selectedPath }: PreviewProps) {
                 }).result;
                 
                 const blob = await result.body.blob();
-                const reader = new FileReader();
                 
-                reader.onload = (e) => {
-                    if (e.target?.result) {
-                        // まずUTF-8として試行
-                        try {
-                            const decoder = new TextDecoder('utf-8');
-                            const uint8Array = new Uint8Array(e.target.result as ArrayBuffer);
-                            const text = decoder.decode(uint8Array);
-                            setContent(text);
-                        } catch (error) {
-                            // UTF-8で失敗した場合、Shift-JISとして試行
-                            try {
-                                const decoder = new TextDecoder('shift-jis');
-                                const uint8Array = new Uint8Array(e.target.result as ArrayBuffer);
-                                const text = decoder.decode(uint8Array);
-                                setContent(text);
-                            } catch (shiftJisError) {
-                                console.error("Error decoding file:", shiftJisError);
-                                setError('ファイルの読み込みに失敗しました。');
+                // 文字化けを検出する関数
+                const hasGarbledCharacters = (text: string): boolean => {
+                    // 特定の文字化けパターンをチェック
+                    const garbledPatterns = ['��', '縺', '繧', '繝'];
+                    return garbledPatterns.some(pattern => text.includes(pattern));
+                };
+
+                // UTF-8で試行
+                let content = await blob.text();
+                console.log('UTF-8 content:', content.substring(0, 100));
+
+                if (hasGarbledCharacters(content)) {
+                    console.log('UTF-8 decoding resulted in garbled text, trying Shift-JIS...');
+                    const reader = new FileReader();
+                    
+                    reader.onload = (e) => {
+                        if (e.target?.result) {
+                            const shiftJisText = e.target.result as string;
+                            console.log('Shift-JIS content:', shiftJisText.substring(0, 100));
+                            if (!hasGarbledCharacters(shiftJisText)) {
+                                setContent(shiftJisText);
+                            } else {
+                                console.log('Both UTF-8 and Shift-JIS resulted in garbled text');
+                                setContent(content); // UTF-8の結果を使用
                             }
                         }
-                    }
-                };
+                    };
 
-                reader.onerror = () => {
-                    console.error("Error reading file");
-                    setError('ファイルの読み込みに失敗しました。');
-                };
+                    reader.onerror = () => {
+                        console.error('Error reading file as Shift-JIS');
+                        setContent(content); // UTF-8の結果を使用
+                    };
 
-                reader.readAsArrayBuffer(blob);
+                    reader.readAsText(blob, 'shift-jis');
+                } else {
+                    setContent(content);
+                }
             } catch (error) {
                 console.error("Error fetching file content:", error);
                 setError('ファイルの読み込みに失敗しました。');
