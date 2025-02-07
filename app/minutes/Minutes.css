@@ -28,6 +28,8 @@ h2 {
   display: flex;
   gap: 10px;
   flex-grow: 1;
+  height: calc(100vh - 150px);
+  margin-bottom: 20px;
 }
 
 /* 表（左） */
@@ -35,9 +37,8 @@ h2 {
   flex: 1;
   display: flex;
   flex-direction: column;
-  height: calc(100vh - 150px);
+  height: 100%;
   margin-left: 20px;
-  margin-bottom: 20px;
   overflow: auto;
 }
 
@@ -89,8 +90,7 @@ h2 {
   padding: 20px;
   margin-right: 20px;
   margin-left: 20px;
-  margin-bottom: 20px;
-  height: calc(100vh - 150px); /* ヘッダーと他の要素の高さを引いた分 */
+  height: 100%;
   display: flex;
   flex-direction: column;
 }
