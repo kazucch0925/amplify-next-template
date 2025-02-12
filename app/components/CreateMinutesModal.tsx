@@ -24,16 +24,13 @@ export default function CreateMinutesModal({ onClose, onCreateComplete }: Create
             const fileName = `minutes/${title.replace(/[^a-z0-9]/gi, '_').toLowerCase()}_${Date.now()}.txt`;
             
             // テキストファイルとして保存
-            const result = await uploadData({
+            await uploadData({
                 key: fileName,
                 data: content,
                 options: {
                     contentType: 'text/plain'
                 }
-            }).result;
-
-            // アップロード完了を待ってから画面を更新
-            await result;
+            });
             
             // 完了後にコールバックを実行
             if (onCreateComplete) {
@@ -42,7 +39,8 @@ export default function CreateMinutesModal({ onClose, onCreateComplete }: Create
             onClose();
         } catch (error) {
             console.error('Error creating minutes:', error);
-            alert('議事録の作成に失敗しました。');
+            const errorMessage = error instanceof Error ? error.message : String(error);
+            alert(`議事録の作成に失敗しました。\nエラー: ${errorMessage}`);
         }
     };
 
