@@ -13,27 +13,32 @@ interface CreateMinutesModalProps {
 export default function CreateMinutesModal({ onClose, onCreateComplete }: CreateMinutesModalProps) {
     const [title, setTitle] = useState('');
     const [content, setContent] = useState('');
+    
+    // フォームの入力状態を監視
+    const isFormValid = title.trim() !== '' && content.trim() !== '';
 
     const handleCreate = async () => {
-        if (!title.trim()) {
-            alert('タイトルを入力してください。');
-            return;
-        }
 
         try {
             // タイトルから有効なファイル名を生成
-            const fileName = `${title.replace(/[^a-z0-9]/gi, '_').toLowerCase()}_${Date.now()}.txt`;
+            const fileName = `minutes/${title.replace(/[^a-z0-9]/gi, '_').toLowerCase()}_${Date.now()}.txt`;
             
             // テキストファイルとして保存
-            await uploadData({
+            const result = await uploadData({
                 key: fileName,
                 data: content,
                 options: {
                     contentType: 'text/plain'
                 }
-            });
+            }).result;
+
+            // アップロード完了を待ってから画面を更新
+            await result;
             
-            onCreateComplete();
+            // 完了後にコールバックを実行
+            if (onCreateComplete) {
+                onCreateComplete();
+            }
             onClose();
         } catch (error) {
             console.error('Error creating minutes:', error);
@@ -73,6 +78,7 @@ export default function CreateMinutesModal({ onClose, onCreateComplete }: Create
                         onClick={handleCreate}
                         className="create-modal-button"
                         colorScheme="primary"
+                        disabled={!isFormValid}
                     >
                         作成
                     </Button>
