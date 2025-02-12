@@ -70,7 +70,7 @@ export default function Minutes() {
                                                 handleOpenCreateModal();
                                             }}
                                             className="create-button"
-                                            iconSrc={"/icons/edit-icon.png"}
+                                            iconSrc={"/icons/create-white-icon.png"}
                                             altText={"Create-icon"}
                                         >
                                             新規作成

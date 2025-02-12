@@ -42,15 +42,11 @@ export default function CreateMinutesModal({ onClose, onCreateComplete }: Create
     };
 
     return (
-        <div className="modal-overlay">
-            <div className="create-minutes-modal">
-                <div className="modal-header">
+        <div className="modal-overlay" onClick={onClose}>
+            <div className="modal-container">
+                <div className="modal-content" onClick={(e) => e.stopPropagation()}>
                     <h3>議事録の新規作成</h3>
-                    <button className="close-button" onClick={onClose}>
-                        <img src="/icons/close-black-icon.png" alt="Close" />
-                    </button>
-                </div>
-                <div className="modal-content">
+                <div className="modal-body">
                     <div className="input-group">
                         <label htmlFor="title">タイトル</label>
                         <input
@@ -74,18 +70,17 @@ export default function CreateMinutesModal({ onClose, onCreateComplete }: Create
                 </div>
                 <div className="modal-footer">
                     <Button
-                        onClick={onClose}
-                        className="cancel-button"
-                    >
-                        キャンセル
-                    </Button>
-                    <Button
                         onClick={handleCreate}
-                        className="create-button"
+                        className="create-modal-button"
+                        colorScheme="primary"
                     >
                         作成
                     </Button>
                 </div>
+                </div>
+                <button className="close-icon" onClick={onClose}>
+                    <img src='/icons/close-white-icon.png' alt='Close' />
+                </button>
             </div>
         </div>
     );
