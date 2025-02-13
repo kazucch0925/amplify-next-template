@@ -10,42 +10,24 @@ interface UploadModalProps {
 }
 
 export default function UploadModal({ onClose, onUploadComplete }: UploadModalProps) {
-    const [hasFile, setHasFile] = useState(false);
-
-    const handleUploadComplete = () => {
-      console.log('handleUploadComplete called');
-      onClose();
-
-      if (onUploadComplete) {
-        onUploadComplete();
-      }
-    }
-
   return (
     <div className="modal-overlay" onClick={onClose}>
       <div className="modal-container">
         <div className="modal-content" onClick={(e) => e.stopPropagation()}>
           <h3>議事録アップロード</h3>
-        <FileUploader
-          acceptedFileTypes={[".pdf,.doc,.docx,.txt"]}
-          path="minutes/"
-          maxFileCount={5}
-          maxFileSize={10000}
-          onUploadSuccess={(result: any) => {
-            console.log(result);
-            deleteTempFile(result.path).then(() => {
-              handleUploadComplete();
-            });
-          }}
-        />
-        <Button
-          onClick={onClose}
-          className="upload-modal-button"
-          colorScheme="primary"
-          disabled={!hasFile}
-        >
-          アップロード
-        </Button>
+          <FileUploader
+            acceptedFileTypes={[".pdf", ".doc", ".docx", ".txt"]}
+            path="public/minutes/"
+            maxFileCount={5}
+            maxFileSize={10000}
+            onUploadSuccess={(result: any) => {
+              console.log(result);
+              if (onUploadComplete) {
+                onUploadComplete();
+              }
+              onClose();
+            }}
+          />
         </div>
         <button className="close-icon" onClick={onClose}>
           <img src='/icons/close-white-icon.png' alt='Close' />

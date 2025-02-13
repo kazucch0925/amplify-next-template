@@ -21,7 +21,7 @@ export default function CreateMinutesModal({ onClose, onCreateComplete }: Create
 
         try {
             // タイトルから有効なファイル名を生成
-            const fileName = `minutes/${title.replace(/[^a-z0-9]/gi, '_').toLowerCase()}_${Date.now()}.txt`;
+            const fileName = `public/minutes/${title.replace(/[^a-z0-9]/gi, '_').toLowerCase()}_${Date.now()}.txt`;
             
             // テキストファイルとして保存
             await uploadData({
