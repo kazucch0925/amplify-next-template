@@ -17,7 +17,7 @@ export default function UploadModal({ onClose, onUploadComplete }: UploadModalPr
           <h3>議事録アップロード</h3>
           <FileUploader
             acceptedFileTypes={[".pdf", ".doc", ".docx", ".txt"]}
-            path="public/minutes/"
+            path="minutes/"
             maxFileCount={5}
             maxFileSize={10000}
             onUploadSuccess={(result: any) => {
