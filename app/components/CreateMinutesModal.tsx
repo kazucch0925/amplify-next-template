@@ -25,11 +25,8 @@ export default function CreateMinutesModal({ onClose, onCreateComplete }: Create
             
             // テキストファイルとして保存
             await uploadData({
-                key: fileName,
                 data: content,
-                options: {
-                    contentType: 'text/plain'
-                }
+                path: fileName
             });
             
             // 完了後にコールバックを実行
