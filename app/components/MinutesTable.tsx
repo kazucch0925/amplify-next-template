@@ -64,8 +64,8 @@ export default function MinutesTable({ tableKey, onSelectMinute }: MinutesTableP
 
   return (
     <div className='minutes-table-container'>
-        <div className='minutes-table'>
-        <table>
+        <div className='table-scroll-container'>
+            <table className='minutes-table'>
             <thead>
             <tr>
                 <th>選択</th>

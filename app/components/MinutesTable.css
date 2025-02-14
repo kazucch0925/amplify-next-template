@@ -1,24 +1,52 @@
 .minutes-table-container {
-  overflow-y: auto;
-  overflow-x: auto;
-  height: 100%;
-  width: 100%;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
 }
 
 .minutes-table {
   border-collapse: collapse;
   margin-bottom: 20px;
   margin-top: -10px;
-  height: 100%;
   width: 100%;
-  min-width: 600px;
+  overflow: auto;
+}
+
+/* テーブルをラップする新しいスクロール可能なコンテナ */
+.table-scroll-container {
+  flex: 1;
+  overflow: auto;
+  border: 1px solid #ddd;
+  border-radius: 4px;
 }
 
 .minutes-table th,
 .minutes-table td {
-  border: 2px solid #ddd;
+  border: 1px solid #ddd;
   padding: 8px;
   text-align: left;
+  min-width: 100px; /* 各列の最小幅を設定 */
+}
+
+/* 各列の幅を調整 */
+.minutes-table th:first-child,
+.minutes-table td:first-child {
+  width: 50px;
+  min-width: 50px;
+}
+
+.minutes-table th:nth-child(2),
+.minutes-table td:nth-child(2) {
+  min-width: 200px;
+}
+
+.minutes-table th:last-child,
+.minutes-table td:last-child,
+.minutes-table th:nth-last-child(2),
+.minutes-table td:nth-last-child(2) {
+  width: 80px;
+  min-width: 80px;
 }
 
 .minutes-table th {
