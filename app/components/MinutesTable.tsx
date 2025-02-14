@@ -8,11 +8,11 @@ import './MinutesTable.css';
 type StorageListOutput = ListAllWithPathOutput['items'];
 
 interface MinutesTableProps {
-  key: number;
+  tableKey: number;
   onSelectMinute: (path: string) => void;
 }
 
-export default function MinutesTable({ key, onSelectMinute }: MinutesTableProps) {
+export default function MinutesTable({ tableKey, onSelectMinute }: MinutesTableProps) {
   const [minutes, setMinutes] = useState<StorageListOutput>([]);
   const [selectedPath, setSelectedPath] = useState<string>('');
 
@@ -30,14 +30,14 @@ export default function MinutesTable({ key, onSelectMinute }: MinutesTableProps)
 
         const filteredItems = result.items.filter(item => !item.path.endsWith('/') && item.path.startsWith('minutes/'));
         const sortedMinutes = sortMinutesByDate(filteredItems);
-        setMinutes(filteredItems);
+        setMinutes(sortedMinutes);
       } catch (error) {
         console.error("Error fetching minutes:", error);
       }
     };
 
     fetchData();
-  }, [key]);
+  }, [tableKey]);
 
   const deleteFile = async (path: string) => {
     if (window.confirm('次のファイルを削除してもよろしいですか？:' + {path})) {

@@ -21,7 +21,7 @@ export default function CreateMinutesModal({ onClose, onCreateComplete }: Create
 
         try {
             // タイトルから有効なファイル名を生成
-            const fileName = `minutes/${title.trim() ? title.replace(/[^a-z0-9]/gi, '_').toLowerCase() : '_'}_${Date.now()}.txt`;
+            const fileName = `minutes/${title}.txt`;
             
             // テキストファイルとして保存
             await uploadData({
@@ -48,7 +48,7 @@ export default function CreateMinutesModal({ onClose, onCreateComplete }: Create
                     <h3>議事録の新規作成</h3>
                 <div className="modal-body">
                     <div className="input-group">
-                        <label htmlFor="title">タイトル</label>
+                        <label htmlFor="title">ファイル名</label>
                         <input
                             type="text"
                             id="title"

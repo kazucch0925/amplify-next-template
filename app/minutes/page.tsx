@@ -78,7 +78,7 @@ export default function Minutes() {
                                     </div>
                                 </div>
                                     <MinutesTable 
-                                        key={minutesListKey} 
+                                        tableKey={minutesListKey} 
                                         onSelectMinute={(path) => setSelectedMinutePath(path)}
                                     />
                             </div>
