@@ -34,8 +34,8 @@ h2 {
 
 /* 表（左） */
 .left-section {
-  flex: 0 0 400px; /* 幅を固定 */
-  min-width: 400px; /* 最小幅を設定 */
+  flex: 1 1 600px; /* 基本幅を600pxに設定し、伸縮可能に */
+  min-width: 600px; /* 最小幅を設定 */
   display: flex;
   flex-direction: column;
   height: 100%;
@@ -102,7 +102,8 @@ h2 {
 
 /* プレビュー表示部（右） */
 .right-section {
-  flex: 1 1 auto; /* 残りのスペースを使用 */
+  flex: 1 1 400px; /* 基本幅を400pxに設定 */
+  max-width: 500px; /* 最大幅を制限 */
   border: 1px solid #ccc;
   border-radius: 8px;
   padding: 20px;
