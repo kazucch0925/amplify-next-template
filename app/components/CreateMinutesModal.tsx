@@ -13,11 +13,13 @@ interface CreateMinutesModalProps {
 export default function CreateMinutesModal({ onClose, onCreateComplete }: CreateMinutesModalProps) {
     const [title, setTitle] = useState('');
     const [content, setContent] = useState('');
+    const [isSaving, setIsSaving] = useState(false);
     
     // フォームの入力状態を監視
     const isFormValid = title.trim() !== '' && content.trim() !== '';
 
     const handleCreate = async () => {
+        setIsSaving(true);
 
         try {
             // タイトルから有効なファイル名を生成
@@ -29,6 +31,9 @@ export default function CreateMinutesModal({ onClose, onCreateComplete }: Create
                 path: fileName
             });
             
+            // ファイルの保存が確実に完了するまで待機
+            await new Promise(resolve => setTimeout(resolve, 1000));
+            
             // 完了後にコールバックを実行
             if (onCreateComplete) {
                 onCreateComplete();
@@ -38,6 +43,8 @@ export default function CreateMinutesModal({ onClose, onCreateComplete }: Create
             console.error('Error creating minutes:', error);
             const errorMessage = error instanceof Error ? error.message : String(error);
             alert(`議事録の作成に失敗しました。\nエラー: ${errorMessage}`);
+        } finally {
+            setIsSaving(false);
         }
     };
 
@@ -73,9 +80,9 @@ export default function CreateMinutesModal({ onClose, onCreateComplete }: Create
                         onClick={handleCreate}
                         className="create-modal-button"
                         colorScheme="primary"
-                        disabled={!isFormValid}
+                        disabled={!isFormValid || isSaving}
                     >
-                        作成
+                        {isSaving ? '保存中...' : '作成'}
                     </Button>
                 </div>
                 </div>
