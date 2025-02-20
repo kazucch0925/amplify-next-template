@@ -9,12 +9,29 @@ type StorageListOutput = ListAllWithPathOutput['items'];
 
 interface MinutesTableProps {
   tableKey: number;
+  searchKeyword?: string;
   onSelectMinute: (path: string) => void;
 }
 
-export default function MinutesTable({ tableKey, onSelectMinute }: MinutesTableProps) {
-  const [minutes, setMinutes] = useState<StorageListOutput>([]);
+export default function MinutesTable({ tableKey, searchKeyword = '', onSelectMinute }: MinutesTableProps) {
+  const [allMinutes, setAllMinutes] = useState<StorageListOutput>([]);
+  const [filteredMinutes, setFilteredMinutes] = useState<StorageListOutput>([]);
   const [selectedPath, setSelectedPath] = useState<string>('');
+
+  // 検索キーワードが変更されたときにフィルタリングを実行
+  useEffect(() => {
+    if (!searchKeyword) {
+      setFilteredMinutes(allMinutes);
+      return;
+    }
+
+    const keyword = searchKeyword.toLowerCase();
+    const filtered = allMinutes.filter(minute => {
+      const fileName = minute.path.replace(/^minutes\/|\\/g, '').toLowerCase();
+      return fileName.includes(keyword);
+    });
+    setFilteredMinutes(filtered);
+  }, [searchKeyword, allMinutes]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -30,7 +47,8 @@ export default function MinutesTable({ tableKey, onSelectMinute }: MinutesTableP
 
         const filteredItems = result.items.filter(item => !item.path.endsWith('/') && item.path.startsWith('minutes/'));
         const sortedMinutes = sortMinutesByDate(filteredItems);
-        setMinutes(sortedMinutes);
+        setAllMinutes(sortedMinutes);
+        setFilteredMinutes(sortedMinutes);
       } catch (error) {
         console.error("Error fetching minutes:", error);
       }
@@ -46,8 +64,9 @@ export default function MinutesTable({ tableKey, onSelectMinute }: MinutesTableP
                 path,
             });
             console.log('Deleted file: ${path}');
-            const newMinutes = minutes.filter(item => item.path != path);
-            setMinutes(newMinutes);
+            const newMinutes = allMinutes.filter(item => item.path != path);
+            setAllMinutes(newMinutes);
+            setFilteredMinutes(newMinutes);
         } catch (error) {
             console.error("Error deleting file:", error);
             alert('ファイルの削除に失敗しました。再度実行してください。');
@@ -77,7 +96,7 @@ export default function MinutesTable({ tableKey, onSelectMinute }: MinutesTableP
             </tr>
             </thead>
             <tbody>
-            {minutes.map((minute) => (
+            {filteredMinutes.map((minute) => (
                 <tr key={minute.path}>
                 <td>
                     <input

@@ -34,7 +34,7 @@ h2 {
 
 /* 表（左） */
 .left-section {
-  flex: 3; /* 右セクションに対する相対的な比率 */
+  flex: 2; /* 右セクションに対する相対的な比率 */
   min-width: 450px; /* 最小限の幅を設定 */
   display: flex;
   flex-direction: column;

@@ -21,6 +21,7 @@ export default function Minutes() {
     const [isCreateModalOpen, setCreateModalOpen] = useState(false);
     const [minutesListKey, setMinutesListKey] = useState(0);
     const [selectedMinutePath, setSelectedMinutePath] = useState<string | null>(null);
+    const [searchKeyword, setSearchKeyword] = useState('');
 
     const handleOpenUploadModal = () => {
         setUploadModalOpen(true);
@@ -53,7 +54,10 @@ export default function Minutes() {
                         <div className="content">
                             <div className="left-section">
                                 <div className="search-upload-container">
-                                    <SearchBar placeholder="議事録を検索..." />
+                                    <SearchBar 
+                                        placeholder="議事録を検索..." 
+                                        onSearch={setSearchKeyword}
+                                    />
                                     <div className="button-container">
                                         <Button
                                             onClick={() => {
@@ -79,6 +83,7 @@ export default function Minutes() {
                                 </div>
                                     <MinutesTable 
                                         tableKey={minutesListKey} 
+                                        searchKeyword={searchKeyword}
                                         onSelectMinute={(path) => setSelectedMinutePath(path)}
                                     />
                             </div>
