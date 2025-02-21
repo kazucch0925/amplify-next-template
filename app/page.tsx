@@ -16,6 +16,13 @@ Amplify.configure(outputs);
 export default function App() {
 
   const [isUploadModalOpen, setUploadModalOpen] = useState(false);
+  const [searchKeyword, setSearchKeyword] = useState('');
+
+  // TODO: 全体検索機能の実装
+  const handleSearch = (keyword: string) => {
+    setSearchKeyword(keyword);
+    console.log('Search keyword:', keyword);
+  };
   const handleUploadButtonClick = () => {
     setUploadModalOpen(true);
   };
@@ -31,7 +38,10 @@ export default function App() {
           <div className="dashboard-container">
             <TopBar isLoggedIn={true} />  {/* ダッシュボードではログアウトボタンを表示 */}
               <h2>ダッシュボード</h2>
-              <SearchBar placeholder="アプリ内を検索..." />
+              <SearchBar 
+                placeholder="アプリ内を検索..." 
+                onSearch={handleSearch}
+              />
               <div className="dashboard-items">
                 <DashboardItem title="Wiki" icon="wiki-icon.png" disabled /*link="/wiki" *//>
                 <DashboardItem title="議事録" icon="minutes-icon.png" link="/minutes" />
