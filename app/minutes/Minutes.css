@@ -115,3 +115,33 @@ h2 {
   flex-direction: column;
   overflow: auto; /* 内容が溢れた場合はスクロール可能に */
 }
+
+/* モバイル向けのレイアウト調整 */
+@media screen and (max-width: 768px) {
+  .content {
+    flex-direction: column;
+  }
+
+  .left-section,
+  .right-section {
+    min-width: auto;
+    margin: 0 10px;
+  }
+
+  .right-section {
+    height: 400px;
+  }
+}
+
+/* スマートフォン向けの追加調整 */
+@media screen and (max-width: 480px) {
+  .search-upload-container {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .button-container {
+    width: 100%;
+    justify-content: space-between;
+  }
+}

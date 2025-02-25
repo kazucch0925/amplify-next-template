@@ -26,27 +26,73 @@
   border: 1px solid #ddd;
   padding: 8px;
   text-align: left;
-  min-width: 100px; /* 各列の最小幅を設定 */
 }
 
-/* 各列の幅を調整 */
-.minutes-table th:first-child,
-.minutes-table td:first-child {
-  width: 50px;
-  min-width: 50px;
+/* PC向けの列幅設定 */
+@media screen and (min-width: 769px) {
+  .minutes-table th,
+  .minutes-table td {
+    min-width: 100px;
+  }
+
+  .minutes-table th:first-child,
+  .minutes-table td:first-child {
+    width: 50px;
+    min-width: 50px;
+  }
+
+  .minutes-table th:nth-child(2),
+  .minutes-table td:nth-child(2) {
+    min-width: 200px;
+  }
+
+  .minutes-table th:last-child,
+  .minutes-table td:last-child,
+  .minutes-table th:nth-last-child(2),
+  .minutes-table td:nth-last-child(2) {
+    width: 80px;
+    min-width: 80px;
+  }
 }
 
-.minutes-table th:nth-child(2),
-.minutes-table td:nth-child(2) {
-  min-width: 200px;
+/* モバイル向けの調整 */
+@media screen and (max-width: 768px) {
+  .minutes-table th,
+  .minutes-table td {
+    padding: 12px 8px; /* タップしやすいサイズに */
+  }
+
+  /* ファイル名列以外を最小限に */
+  .minutes-table th:not(:nth-child(2)),
+  .minutes-table td:not(:nth-child(2)) {
+    width: auto;
+    min-width: 60px;
+  }
+
+  /* ファイル名列は残りのスペースを使用 */
+  .minutes-table th:nth-child(2),
+  .minutes-table td:nth-child(2) {
+    min-width: 120px;
+  }
+
+  .icon-button img {
+    width: 28px; /* モバイルでは小さめに */
+    height: 28px;
+  }
 }
 
-.minutes-table th:last-child,
-.minutes-table td:last-child,
-.minutes-table th:nth-last-child(2),
-.minutes-table td:nth-last-child(2) {
-  width: 80px;
-  min-width: 80px;
+/* スマートフォン向けの追加調整 */
+@media screen and (max-width: 480px) {
+  .minutes-table th,
+  .minutes-table td {
+    padding: 10px 6px;
+    font-size: 14px;
+  }
+
+  .icon-button img {
+    width: 24px;
+    height: 24px;
+  }
 }
 
 .minutes-table th {
