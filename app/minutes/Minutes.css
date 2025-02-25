@@ -120,16 +120,72 @@ h2 {
 @media screen and (max-width: 768px) {
   .content {
     flex-direction: column;
+    position: relative;
+    overflow: hidden;
   }
 
-  .left-section,
-  .right-section {
+  .left-section {
     min-width: auto;
     margin: 0 10px;
+    flex: 1;
+    transition: transform 0.3s ease;
   }
 
+  /* スライドプレビュー */
   .right-section {
-    height: 400px;
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    width: 90%;
+    max-width: 400px;
+    margin: 0;
+    background: white;
+    transform: translateX(100%);
+    transition: transform 0.3s ease;
+    z-index: 1000;
+    box-shadow: -2px 0 10px rgba(0, 0, 0, 0.1);
+  }
+
+  /* プレビュー表示時 */
+  .right-section.show {
+    transform: translateX(0);
+  }
+
+  /* プレビュー表示時の背景オーバーレイ */
+  .preview-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.3);
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease;
+    z-index: 999;
+  }
+
+  .preview-overlay.show {
+    opacity: 1;
+    visibility: visible;
+  }
+
+  /* プレビューの閉じるボタン */
+  .preview-close {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: none;
+    border: none;
+    padding: 8px;
+    cursor: pointer;
+    z-index: 1001;
+  }
+
+  .preview-close img {
+    width: 24px;
+    height: 24px;
   }
 }
 
@@ -143,5 +199,9 @@ h2 {
   .button-container {
     width: 100%;
     justify-content: space-between;
+  }
+
+  .right-section {
+    width: 100%;
   }
 }

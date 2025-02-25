@@ -21,7 +21,19 @@ export default function Minutes() {
     const [isCreateModalOpen, setCreateModalOpen] = useState(false);
     const [minutesListKey, setMinutesListKey] = useState(0);
     const [selectedMinutePath, setSelectedMinutePath] = useState<string | null>(null);
+    const [isPreviewVisible, setIsPreviewVisible] = useState(false);
     const [searchKeyword, setSearchKeyword] = useState('');
+
+    // プレビューを表示
+    const showPreview = (path: string) => {
+        setSelectedMinutePath(path);
+        setIsPreviewVisible(true);
+    };
+
+    // プレビューを閉じる
+    const hidePreview = () => {
+        setIsPreviewVisible(false);
+    };
 
     const handleOpenUploadModal = () => {
         setUploadModalOpen(true);
@@ -81,15 +93,24 @@ export default function Minutes() {
                                         </Button>
                                     </div>
                                 </div>
-                                    <MinutesTable 
-                                        tableKey={minutesListKey} 
-                                        searchKeyword={searchKeyword}
-                                        onSelectMinute={(path) => setSelectedMinutePath(path)}
-                                    />
+                                <MinutesTable 
+                                    tableKey={minutesListKey} 
+                                    searchKeyword={searchKeyword}
+                                    onSelectMinute={(path) => showPreview(path)}
+                                />
                             </div>
-                            <div className="right-section">
-                                    <Preview selectedPath={selectedMinutePath} />
+                            <div className={`right-section ${isPreviewVisible ? 'show' : ''}`}>
+                                <button className="preview-close" onClick={hidePreview}>
+                                    <img src="/icons/close-black-icon.png" alt="Close" />
+                                </button>
+                                <Preview selectedPath={selectedMinutePath} />
                             </div>
+                            {isPreviewVisible && (
+                                <div 
+                                    className={`preview-overlay ${isPreviewVisible ? 'show' : ''}`}
+                                    onClick={hidePreview}
+                                />
+                            )}
                         </div>
                         {isUploadModalOpen && <UploadModal onClose={handleCloseUploadModal} onUploadComplete={handleRefreshMinutes}/>}
                         {isCreateModalOpen && <CreateMinutesModal onClose={handleCloseCreateModal} onCreateComplete={handleRefreshMinutes}/>}
