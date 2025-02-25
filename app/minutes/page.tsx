@@ -99,6 +99,11 @@ export default function Minutes() {
                                     onSelectMinute={(path) => showPreview(path)}
                                 />
                             </div>
+                            {/* プレビューつまみ */}
+                            <div 
+                                className={`preview-handle ${isPreviewVisible ? 'show' : ''}`}
+                                onClick={() => setIsPreviewVisible(!isPreviewVisible)}
+                            />
                             <div className={`right-section ${isPreviewVisible ? 'show' : ''}`}>
                                 <button className="preview-close" onClick={hidePreview}>
                                     <img src="/icons/close-black-icon.png" alt="Close" />

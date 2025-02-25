@@ -171,26 +171,70 @@ h2 {
     visibility: visible;
   }
 
-  /* プレビューの閉じるボタン */
+  /* プレビューの閉じるボタン（モバイルのみ） */
   .preview-close {
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    background: none;
-    border: none;
-    padding: 8px;
-    cursor: pointer;
-    z-index: 1001;
+    display: none;  /* デフォルトでは非表示 */
   }
 
-  .preview-close img {
-    width: 24px;
-    height: 24px;
+  @media screen and (max-width: 768px) {
+    .preview-close {
+      display: block;  /* モバイル時のみ表示 */
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      background: none;
+      border: none;
+      padding: 8px;
+      cursor: pointer;
+      z-index: 1001;
+    }
+
+    .preview-close img {
+      width: 24px;
+      height: 24px;
+    }
   }
 }
 
-/* スマートフォン向けの追加調整 */
-@media screen and (max-width: 480px) {
+  /* プレビューつまみ（モバイルのみ） */
+  @media screen and (max-width: 768px) {
+    .preview-handle {
+      position: fixed;
+      top: 50%;
+      right: 0;
+      transform: translateY(-50%);
+      width: 24px;
+      height: 80px;
+      background-color: #5C6BC0;
+      border-radius: 8px 0 0 8px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 1001;
+      transition: all 0.3s ease;
+    }
+
+    .preview-handle:hover {
+      background-color: #3F51B5;
+    }
+
+    .preview-handle::before {
+      content: '';
+      width: 4px;
+      height: 24px;
+      background-color: white;
+      border-radius: 2px;
+    }
+
+    /* プレビュー表示時のつまみ位置調整 */
+    .preview-handle.show {
+      right: 90%; /* プレビューの幅に合わせて調整 */
+    }
+  }
+
+  /* スマートフォン向けの追加調整 */
+  @media screen and (max-width: 480px) {
   .search-upload-container {
     flex-direction: column;
     gap: 10px;
