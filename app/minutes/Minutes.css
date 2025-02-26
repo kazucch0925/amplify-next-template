@@ -4,7 +4,6 @@ html, body {
   padding: 0;
 }
 
-
 /* ページ全体 */
 .minutes-page-container {
   padding: 0px;
@@ -43,25 +42,32 @@ h2 {
   overflow: auto;
 }
 
+/* 検索バーとボタンのコンテナ - 固定表示 */
 .search-upload-container {
   display: flex;
-  justify-content: space-between;
-  align-items: center;
+  flex-direction: column;
   margin-bottom: 10px;
+  position: sticky;
+  top: 0;
+  background-color: white;
+  padding: 10px 0;
+  z-index: 10;
+  border-bottom: 1px solid #eee;
 }
 
 .search-upload-container > * {
-  margin-right: 0px;
+  margin-bottom: 10px;
 }
 
 .search-upload-container .search-bar {
-  flex: 1;
+  width: 100%;
 }
 
 .button-container {
   display: flex;
   gap: 10px;
   align-items: center;
+  justify-content: flex-end;
 }
 
 /* ボタンの共通スタイル */
@@ -118,7 +124,8 @@ h2 {
 
 /* プレビューの閉じるボタンとつまみ（デフォルトで非表示） */
 .preview-close,
-.preview-handle {
+.preview-handle,
+.preview-container {
   display: none;
 }
 
@@ -137,25 +144,95 @@ h2 {
     transition: transform 0.3s ease;
   }
 
-  /* スライドプレビュー */
-  .right-section {
+  /* プレビューコンテナ（つまみとプレビュー部分を一体化） */
+  .preview-container {
+    display: flex;
     position: fixed;
     top: 0;
     right: 0;
     bottom: 0;
+    z-index: 1000;
+    transform: translateX(100%);
+    transition: transform 0.3s ease;
+  }
+
+  /* プレビュー表示時 */
+  .preview-container.show {
+    transform: translateX(0);
+  }
+
+  /* プレビューつまみ（モバイル時のみ表示） */
+  .preview-handle {
+    display: flex;
+    position: relative;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 36px;
+    height: 120px;
+    background-color: #5C6BC0;
+    border-radius: 8px 0 0 8px;
+    cursor: grab;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    z-index: 1001;
+    touch-action: pan-x;
+    user-select: none;
+  }
+
+  .preview-handle:active {
+    cursor: grabbing;
+  }
+
+  .preview-handle:hover {
+    background-color: #3F51B5;
+  }
+
+  .preview-handle-text {
+    writing-mode: vertical-rl;
+    text-orientation: mixed;
+    margin-top: 10px;
+    white-space: nowrap;
+    color: white;
+    font-size: 12px;
+  }
+
+  .preview-handle::before {
+    content: '';
+    width: 4px;
+    height: 24px;
+    background-color: white;
+    border-radius: 2px;
+  }
+
+  /* スライドプレビュー */
+  .right-section {
+    position: relative;
     width: 90%;
     max-width: 400px;
     margin: 0;
     background: white;
-    transform: translateX(100%);
-    transition: transform 0.3s ease;
     z-index: 1000;
     box-shadow: -2px 0 10px rgba(0, 0, 0, 0.1);
+    border-radius: 0;
   }
 
-  /* プレビュー表示時 */
-  .right-section.show {
-    transform: translateX(0);
+  /* プレビューの閉じるボタン（モバイル時のみ表示） */
+  .preview-close {
+    display: block;
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: none;
+    border: none;
+    padding: 8px;
+    cursor: pointer;
+    z-index: 1001;
+  }
+
+  .preview-close img {
+    width: 24px;
+    height: 24px;
   }
 
   /* プレビュー表示時の背景オーバーレイ */
@@ -177,79 +254,14 @@ h2 {
     visibility: visible;
   }
 
-  /* プレビューの閉じるボタン（モバイル時のみ表示） */
-  .preview-close {
-    display: block;
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    background: none;
-    border: none;
-    padding: 8px;
-    cursor: pointer;
-    z-index: 1001;
-  }
-
-  .preview-close img {
-    width: 24px;
-    height: 24px;
-  }
-
-  /* プレビューつまみ（モバイル時のみ表示） */
-  .preview-handle {
-    display: flex;
-    position: fixed;
-    top: 50%;
-    right: 0;
-    transform: translateY(-50%);
-    width: 24px;
-    height: 80px;
-    background-color: #5C6BC0;
-    border-radius: 8px 0 0 8px;
-    cursor: grab;
-    align-items: center;
-    justify-content: center;
-    z-index: 1001;
-    transition: all 0.3s ease;
-    touch-action: pan-x;
-    user-select: none;
-  }
-
-  .preview-handle:active {
-    cursor: grabbing;
-  }
-
-  .preview-handle:hover {
-    background-color: #3F51B5;
-  }
-
-  .preview-handle::before {
-    content: '';
-    width: 4px;
-    height: 24px;
-    background-color: white;
-    border-radius: 2px;
-  }
-
-  /* プレビュー表示時のつまみ位置調整 */
-  .preview-handle.show {
-    right: calc(90% - 24px); /* プレビューの幅に合わせて調整 */
-  }
-
   /* ドラッグ中は遷移を無効化 */
-  .preview-handle.dragging,
-  .right-section.dragging {
+  .preview-container.dragging {
     transition: none;
   }
 }
 
 /* スマートフォン向けの追加調整 */
 @media screen and (max-width: 480px) {
-  .search-upload-container {
-    flex-direction: column;
-    gap: 10px;
-  }
-
   .button-container {
     width: 100%;
     justify-content: space-between;

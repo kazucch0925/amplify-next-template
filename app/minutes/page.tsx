@@ -155,22 +155,29 @@ export default function Minutes() {
                                     onSelectMinute={(path) => showPreview(path)}
                                 />
                             </div>
-                            {/* プレビューつまみ */}
-                            <div 
-                                ref={handleRef}
-                                className={`preview-handle ${isPreviewVisible ? 'show' : ''}`}
-                                onClick={() => setIsPreviewVisible(!isPreviewVisible)}
-                                onMouseDown={handleTouchStart}
-                                onTouchStart={handleTouchStart}
-                            />
+                            {/* プレビューコンテナ（つまみとプレビュー部分を一体化） */}
                             <div 
                                 ref={rightSectionRef}
-                                className={`right-section ${isPreviewVisible ? 'show' : ''}`}
+                                className={`preview-container ${isPreviewVisible ? 'show' : ''}`}
                             >
-                                <button className="preview-close" onClick={hidePreview}>
-                                    <img src="/icons/close-black-icon.png" alt="Close" />
-                                </button>
-                                <Preview selectedPath={selectedMinutePath} />
+                                {/* プレビューつまみ */}
+                                <div 
+                                    ref={handleRef}
+                                    className="preview-handle"
+                                    onClick={() => setIsPreviewVisible(!isPreviewVisible)}
+                                    onMouseDown={handleTouchStart}
+                                    onTouchStart={handleTouchStart}
+                                >
+                                    <div className="preview-handle-text">プレビュー表示</div>
+                                </div>
+                                
+                                {/* プレビュー本体 */}
+                                <div className="right-section">
+                                    <button className="preview-close" onClick={hidePreview}>
+                                        <img src="/icons/close-black-icon.png" alt="Close" />
+                                    </button>
+                                    <Preview selectedPath={selectedMinutePath} />
+                                </div>
                             </div>
                             {isPreviewVisible && (
                                 <div 

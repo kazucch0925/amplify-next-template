@@ -5,28 +5,22 @@
   min-height: 0;
 }
 
-.minutes-table {
-  border-collapse: collapse;
-  margin-bottom: 20px;
-  margin-top: -10px;
-  width: 100%;
-  overflow: auto;
-}
-
 /* テーブルをラップする新しいスクロール可能なコンテナ */
 .table-scroll-container {
   flex: 1;
   overflow: auto;
   border: 1px solid #ddd;
   border-radius: 4px;
-  margin-top: 0;  /* 上部の隙間を削除 */
+  padding: 0;
+  margin: 0;
 }
 
 /* スクロール時のヘッダー固定を改善 */
 .minutes-table {
-  margin-top: 0;  /* 上部マージンを削除 */
   border-collapse: collapse;
   width: 100%;
+  margin: 0;
+  padding: 0;
 }
 
 .minutes-table th,
