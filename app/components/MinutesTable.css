@@ -19,6 +19,14 @@
   overflow: auto;
   border: 1px solid #ddd;
   border-radius: 4px;
+  margin-top: 0;  /* 上部の隙間を削除 */
+}
+
+/* スクロール時のヘッダー固定を改善 */
+.minutes-table {
+  margin-top: 0;  /* 上部マージンを削除 */
+  border-collapse: collapse;
+  width: 100%;
 }
 
 .minutes-table th,

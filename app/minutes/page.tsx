@@ -2,7 +2,7 @@
 
 import { Authenticator } from '@aws-amplify/ui-react'
 import '@aws-amplify/ui-react/styles.css'
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import TopBar from './../components/TopBar';
 import SearchBar from './../components/SearchBar';
 import MinutesTable from './../components/MinutesTable';
@@ -22,7 +22,63 @@ export default function Minutes() {
     const [minutesListKey, setMinutesListKey] = useState(0);
     const [selectedMinutePath, setSelectedMinutePath] = useState<string | null>(null);
     const [isPreviewVisible, setIsPreviewVisible] = useState(false);
+    const [isDragging, setIsDragging] = useState(false);
+    const handleRef = useRef<HTMLDivElement>(null);
+    const rightSectionRef = useRef<HTMLDivElement>(null);
+    const startXRef = useRef(0);
+    const currentXRef = useRef(0);
     const [searchKeyword, setSearchKeyword] = useState('');
+
+    // タッチ/マウスイベントハンドラー
+    const handleTouchStart = (e: React.TouchEvent | React.MouseEvent) => {
+        setIsDragging(true);
+        const clientX = 'touches' in e ? e.touches[0].clientX : e.clientX;
+        startXRef.current = clientX;
+        currentXRef.current = clientX;
+        
+        // ドラッグ中はトランジションを無効化
+        if (handleRef.current) handleRef.current.classList.add('dragging');
+        if (rightSectionRef.current) rightSectionRef.current.classList.add('dragging');
+    };
+
+    const handleTouchMove = (e: TouchEvent | MouseEvent) => {
+        if (!isDragging) return;
+        
+        const clientX = 'touches' in e ? e.touches[0].clientX : e.clientX;
+        const deltaX = clientX - startXRef.current;
+        currentXRef.current = clientX;
+        
+        // プレビューの表示状態を更新
+        const threshold = window.innerWidth * 0.3; // 30%の閾値
+        if (isPreviewVisible && deltaX > threshold) {
+            setIsPreviewVisible(false);
+        } else if (!isPreviewVisible && deltaX < -threshold) {
+            setIsPreviewVisible(true);
+        }
+    };
+
+    const handleTouchEnd = () => {
+        setIsDragging(false);
+        
+        // トランジションを再有効化
+        if (handleRef.current) handleRef.current.classList.remove('dragging');
+        if (rightSectionRef.current) rightSectionRef.current.classList.remove('dragging');
+    };
+
+    // イベントリスナーの設定
+    useEffect(() => {
+        document.addEventListener('mousemove', handleTouchMove);
+        document.addEventListener('mouseup', handleTouchEnd);
+        document.addEventListener('touchmove', handleTouchMove);
+        document.addEventListener('touchend', handleTouchEnd);
+        
+        return () => {
+            document.removeEventListener('mousemove', handleTouchMove);
+            document.removeEventListener('mouseup', handleTouchEnd);
+            document.removeEventListener('touchmove', handleTouchMove);
+            document.removeEventListener('touchend', handleTouchEnd);
+        };
+    }, [isDragging, isPreviewVisible]);
 
     // プレビューを表示
     const showPreview = (path: string) => {
@@ -101,10 +157,16 @@ export default function Minutes() {
                             </div>
                             {/* プレビューつまみ */}
                             <div 
+                                ref={handleRef}
                                 className={`preview-handle ${isPreviewVisible ? 'show' : ''}`}
                                 onClick={() => setIsPreviewVisible(!isPreviewVisible)}
+                                onMouseDown={handleTouchStart}
+                                onTouchStart={handleTouchStart}
                             />
-                            <div className={`right-section ${isPreviewVisible ? 'show' : ''}`}>
+                            <div 
+                                ref={rightSectionRef}
+                                className={`right-section ${isPreviewVisible ? 'show' : ''}`}
+                            >
                                 <button className="preview-close" onClick={hidePreview}>
                                     <img src="/icons/close-black-icon.png" alt="Close" />
                                 </button>

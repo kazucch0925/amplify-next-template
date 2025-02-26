@@ -206,11 +206,17 @@ h2 {
     height: 80px;
     background-color: #5C6BC0;
     border-radius: 8px 0 0 8px;
-    cursor: pointer;
+    cursor: grab;
     align-items: center;
     justify-content: center;
     z-index: 1001;
     transition: all 0.3s ease;
+    touch-action: pan-x;
+    user-select: none;
+  }
+
+  .preview-handle:active {
+    cursor: grabbing;
   }
 
   .preview-handle:hover {
@@ -227,12 +233,18 @@ h2 {
 
   /* プレビュー表示時のつまみ位置調整 */
   .preview-handle.show {
-    right: 90%; /* プレビューの幅に合わせて調整 */
+    right: calc(90% - 24px); /* プレビューの幅に合わせて調整 */
+  }
+
+  /* ドラッグ中は遷移を無効化 */
+  .preview-handle.dragging,
+  .right-section.dragging {
+    transition: none;
   }
 }
 
-  /* スマートフォン向けの追加調整 */
-  @media screen and (max-width: 480px) {
+/* スマートフォン向けの追加調整 */
+@media screen and (max-width: 480px) {
   .search-upload-container {
     flex-direction: column;
     gap: 10px;
