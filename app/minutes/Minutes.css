@@ -107,8 +107,8 @@ h2 {
   margin-right: 10px;
 }
 
-/* プレビュー表示部（右） */
-.right-section {
+/* PC版のプレビュー表示部（右） */
+.right-section-pc {
   flex: 2; /* 左セクションに対する相対的な比率 */
   min-width: 300px; /* 最小限の幅を設定 */
   border: 1px solid #ccc;
@@ -122,10 +122,11 @@ h2 {
   overflow: auto; /* 内容が溢れた場合はスクロール可能に */
 }
 
-/* プレビューの閉じるボタンとつまみ（デフォルトで非表示） */
+/* モバイル版のプレビュー関連要素（デフォルトで非表示） */
 .preview-close,
 .preview-handle,
-.preview-container {
+.preview-container,
+.right-section-mobile {
   display: none;
 }
 
@@ -144,12 +145,17 @@ h2 {
     transition: transform 0.3s ease;
   }
 
+  /* PC版のプレビュー部分を非表示 */
+  .right-section-pc {
+    display: none;
+  }
+
   /* プレビューコンテナ（つまみとプレビュー部分を一体化） */
   .preview-container {
     display: flex;
     position: fixed;
     top: 0;
-    right: 0;
+    right: -36px; /* つまみの幅分だけ右にずらす */
     bottom: 0;
     z-index: 1000;
     transform: translateX(100%);
@@ -159,6 +165,7 @@ h2 {
   /* プレビュー表示時 */
   .preview-container.show {
     transform: translateX(0);
+    right: 0; /* 表示時は右端に合わせる */
   }
 
   /* プレビューつまみ（モバイル時のみ表示） */
@@ -178,6 +185,7 @@ h2 {
     z-index: 1001;
     touch-action: pan-x;
     user-select: none;
+    left: -36px; /* 左にずらしてコンテナの外に出す */
   }
 
   .preview-handle:active {
@@ -206,7 +214,9 @@ h2 {
   }
 
   /* スライドプレビュー */
-  .right-section {
+  .right-section-mobile {
+    display: flex;
+    flex-direction: column;
     position: relative;
     width: 90%;
     max-width: 400px;
@@ -215,6 +225,9 @@ h2 {
     z-index: 1000;
     box-shadow: -2px 0 10px rgba(0, 0, 0, 0.1);
     border-radius: 0;
+    overflow: auto;
+    height: 100%;
+    padding: 20px;
   }
 
   /* プレビューの閉じるボタン（モバイル時のみ表示） */
@@ -267,7 +280,7 @@ h2 {
     justify-content: space-between;
   }
 
-  .right-section {
+  .right-section-mobile {
     width: 100%;
   }
 }

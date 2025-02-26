@@ -155,7 +155,12 @@ export default function Minutes() {
                                     onSelectMinute={(path) => showPreview(path)}
                                 />
                             </div>
-                            {/* プレビューコンテナ（つまみとプレビュー部分を一体化） */}
+                            {/* PC版のプレビュー表示部分 */}
+                            <div className="right-section-pc">
+                                <Preview selectedPath={selectedMinutePath} />
+                            </div>
+                            
+                            {/* モバイル版のプレビューコンテナ（つまみとプレビュー部分を一体化） */}
                             <div 
                                 ref={rightSectionRef}
                                 className={`preview-container ${isPreviewVisible ? 'show' : ''}`}
@@ -171,8 +176,8 @@ export default function Minutes() {
                                     <div className="preview-handle-text">プレビュー表示</div>
                                 </div>
                                 
-                                {/* プレビュー本体 */}
-                                <div className="right-section">
+                                {/* モバイル版のプレビュー本体 */}
+                                <div className="right-section-mobile">
                                     <button className="preview-close" onClick={hidePreview}>
                                         <img src="/icons/close-black-icon.png" alt="Close" />
                                     </button>
