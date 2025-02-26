@@ -25,20 +25,21 @@ h2 {
 /* 表（左）とプレビュー表示部（右）の関係 */
 .content {
   display: flex;
-  gap: 10px;
+  gap: 20px; /* 左右セクション間の間隔を広げる */
   flex-grow: 1;
   height: calc(100vh - 150px);
   margin-bottom: 20px;
+  padding: 0 20px; /* 左右に余白を追加 */
 }
 
 /* 表（左） */
 .left-section {
-  flex: 2; /* 右セクションに対する相対的な比率 */
-  min-width: 450px; /* 最小限の幅を設定 */
+  flex: 1; /* 右セクションとの比率を調整 */
+  min-width: 300px; /* 最小幅を調整 */
+  max-width: 60%; /* 最大幅を設定して右セクションとの重なりを防止 */
   display: flex;
   flex-direction: column;
   height: 100%;
-  margin-left: 20px;
   overflow: auto;
 }
 
@@ -53,6 +54,7 @@ h2 {
   padding: 10px 0;
   z-index: 10;
   border-bottom: 1px solid #eee;
+  width: 100%; /* 親要素の幅に合わせる */
 }
 
 .search-upload-container > * {
@@ -109,13 +111,11 @@ h2 {
 
 /* PC版のプレビュー表示部（右） */
 .right-section-pc {
-  flex: 2; /* 左セクションに対する相対的な比率 */
+  flex: 1; /* 左セクションとの比率を調整 */
   min-width: 300px; /* 最小限の幅を設定 */
   border: 1px solid #ccc;
   border-radius: 8px;
   padding: 20px;
-  margin-right: 20px;
-  margin-left: 20px;
   height: 100%;
   display: flex;
   flex-direction: column;
@@ -142,11 +142,12 @@ h2 {
     flex-direction: column;
     position: relative;
     overflow: hidden;
+    padding: 0 10px; /* 左右の余白を調整 */
   }
 
   .left-section {
     min-width: auto;
-    margin: 0 10px;
+    max-width: 100%; /* モバイルでは最大幅の制限を解除 */
     flex: 1;
     transition: transform 0.3s ease;
   }
@@ -161,25 +162,27 @@ h2 {
     display: flex;
     position: fixed;
     top: 0;
-    right: -36px; /* つまみの幅分だけ右にずらす */
+    right: 0; /* 右端に配置 */
     bottom: 0;
     z-index: 1000;
-    transform: translateX(100%);
+    transform: translateX(calc(100% - 8px)); /* つまみの一部だけ表示 */
     transition: transform 0.3s ease;
+    width: 90%; /* 幅を固定 */
+    max-width: 400px; /* 最大幅を制限 */
   }
 
   /* プレビュー表示時 */
   .preview-container.show {
-    transform: translateX(0);
-    right: 0; /* 表示時は右端に合わせる */
+    transform: translateX(0); /* 完全に表示 */
   }
 
   /* プレビューつまみ（モバイル時のみ表示） */
   .preview-handle {
     display: flex;
-    position: relative;
+    position: absolute; /* 絶対位置指定に変更 */
+    left: 0; /* 左端に配置 */
     top: 50%;
-    transform: translateY(-50%);
+    transform: translate(-100%, -50%); /* 左にずらして、縦方向に中央揃え */
     width: 36px;
     height: 120px;
     background-color: #5C6BC0;
@@ -191,7 +194,6 @@ h2 {
     z-index: 1001;
     touch-action: pan-x;
     user-select: none;
-    left: -36px; /* 左にずらしてコンテナの外に出す */
   }
 
   .preview-handle:active {
@@ -224,8 +226,7 @@ h2 {
     display: flex;
     flex-direction: column;
     position: relative;
-    width: 90%;
-    max-width: 400px;
+    width: 100%; /* コンテナの幅いっぱいに */
     margin: 0;
     background: white;
     z-index: 1000;
@@ -292,7 +293,9 @@ h2 {
     justify-content: space-between;
   }
 
-  .right-section-mobile {
-    width: 100%;
+  /* スマホでは画面いっぱいに表示 */
+  .preview-container {
+    width: calc(100% - 36px); /* つまみの幅を考慮 */
+    max-width: none;
   }
 }
