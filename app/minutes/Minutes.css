@@ -122,6 +122,12 @@ h2 {
   overflow: auto; /* 内容が溢れた場合はスクロール可能に */
 }
 
+/* プレビューコンポーネントがPC版の右セクション内に表示される場合 */
+.right-section-pc .preview-component {
+  height: 100%;
+  width: 100%;
+}
+
 /* モバイル版のプレビュー関連要素（デフォルトで非表示） */
 .preview-close,
 .preview-handle,
@@ -228,6 +234,12 @@ h2 {
     overflow: auto;
     height: 100%;
     padding: 20px;
+  }
+
+  /* プレビューコンポーネントがモバイル版の右セクション内に表示される場合 */
+  .right-section-mobile .preview-component {
+    height: 100%;
+    width: 100%;
   }
 
   /* プレビューの閉じるボタン（モバイル時のみ表示） */

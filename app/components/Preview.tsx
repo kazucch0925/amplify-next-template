@@ -77,7 +77,7 @@ export default function Preview({ selectedPath }: PreviewProps) {
     }, [selectedPath]);
 
     return (
-        <div className="preview-container">
+        <div className="preview-component">
             <h3>議事録プレビュー</h3>
             {!selectedPath && <p>左の一覧から議事録を選択してください</p>}
             {loading && <p>読み込み中...</p>}
