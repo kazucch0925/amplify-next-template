@@ -36,11 +36,12 @@ h2 {
 .left-section {
   flex: 1; /* 右セクションとの比率を調整 */
   min-width: 300px; /* 最小幅を調整 */
-  max-width: 60%; /* 最大幅を設定して右セクションとの重なりを防止 */
+  max-width: 55%; /* 最大幅をさらに制限して右セクションとの重なりを防止 */
   display: flex;
   flex-direction: column;
   height: 100%;
   overflow: auto;
+  padding-right: 10px; /* 右側に余白を追加 */
 }
 
 /* 検索バーとボタンのコンテナ - 固定表示 */
@@ -55,6 +56,7 @@ h2 {
   z-index: 10;
   border-bottom: 1px solid #eee;
   width: 100%; /* 親要素の幅に合わせる */
+  box-sizing: border-box; /* パディングとボーダーを幅に含める */
 }
 
 .search-upload-container > * {

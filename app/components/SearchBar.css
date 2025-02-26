@@ -5,7 +5,9 @@
   background-color: white;
   border-radius: 20px;
   padding: 8px;
-  margin: 20px;
+  margin: 0; /* マージンを削除 */
+  width: 100%; /* 幅を親要素に合わせる */
+  box-sizing: border-box; /* パディングとボーダーを幅に含める */
 }
 
 .search-input {
