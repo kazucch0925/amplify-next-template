@@ -220,8 +220,8 @@ h2 {
     letter-spacing: 1px;
   }
 
-  /* 左向き矢印アイコン */
-  .preview-handle::before {
+  /* 左向き矢印アイコン（閉じているときのみ表示） */
+  .preview-container:not(.show) .preview-handle::before {
     content: '';
     width: 0;
     height: 0;
@@ -231,15 +231,15 @@ h2 {
     margin-bottom: 5px;
   }
 
-  /* 右向き矢印アイコン */
-  .preview-handle::after {
+  /* 右向き矢印アイコン（開いているときのみ表示） */
+  .preview-container.show .preview-handle::before {
     content: '';
     width: 0;
     height: 0;
     border-top: 8px solid transparent;
     border-bottom: 8px solid transparent;
     border-left: 12px solid white;
-    margin-top: 5px;
+    margin-bottom: 5px;
   }
 
   /* つまみのパルスアニメーション */

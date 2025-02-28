@@ -97,7 +97,30 @@ export default function MinutesTable({ tableKey, searchKeyword = '', onSelectMin
             </thead>
             <tbody>
             {filteredMinutes.map((minute) => (
-                <tr key={minute.path}>
+                <tr 
+                    key={minute.path}
+                    className={selectedPath === minute.path ? 'selected-row' : ''}
+                    onClick={(e) => {
+                        // ダウンロードボタンや削除ボタンがクリックされた場合は、行の選択を行わない
+                        if ((e.target as HTMLElement).closest('.icon-button')) {
+                            return;
+                        }
+                        setSelectedPath(minute.path);
+                        onSelectMinute(minute.path);
+                    }}
+                    style={{ cursor: 'pointer' }}
+                    role="button"
+                    aria-selected={selectedPath === minute.path}
+                    tabIndex={0} // キーボード操作可能に
+                    onKeyDown={(e) => {
+                        // Enterキーまたはスペースキーでも選択可能に
+                        if (e.key === 'Enter' || e.key === ' ') {
+                            e.preventDefault();
+                            setSelectedPath(minute.path);
+                            onSelectMinute(minute.path);
+                        }
+                    }}
+                >
                 <td>
                     <input
                         type="radio"
@@ -107,18 +130,31 @@ export default function MinutesTable({ tableKey, searchKeyword = '', onSelectMin
                             setSelectedPath(minute.path);
                             onSelectMinute(minute.path);
                         }}
+                        onClick={(e) => e.stopPropagation()} // イベントの伝播を停止
                     />
                 </td>
                 <td>{minute.path.replace(/^minutes\/|\\/g, '')}</td>
                 <td>{minute.lastModified ? new Date(minute.lastModified).toLocaleDateString() : ''}</td>
                 <td>{minute.size} bytes</td>
                 <td>
-                    <button onClick={() => downloadFile(minute.path)} className="icon-button">
-                    <img src="/icons/download-icon.png" alt="Download" />
+                    <button 
+                        onClick={(e) => {
+                            e.stopPropagation(); // イベントの伝播を停止
+                            downloadFile(minute.path);
+                        }} 
+                        className="icon-button"
+                    >
+                        <img src="/icons/download-icon.png" alt="Download" />
                     </button>
                 </td>
                 <td>
-                    <button onClick={() => deleteFile(minute.path)} className="icon-button">
+                    <button 
+                        onClick={(e) => {
+                            e.stopPropagation(); // イベントの伝播を停止
+                            deleteFile(minute.path);
+                        }} 
+                        className="icon-button"
+                    >
                         <img src="/icons/delete-icon.png" alt="Delete" />
                     </button>
                 </td>
