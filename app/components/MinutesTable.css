@@ -109,3 +109,26 @@
   width: 36px;
   height: 36px;
 }
+
+/* 行のホバー効果 */
+.minutes-table tbody tr:hover {
+  background-color: #f5f5f5;
+  transition: background-color 0.2s;
+}
+
+/* 選択された行のスタイル */
+.minutes-table tbody tr.selected-row {
+  background-color: #E8EAF6;
+  border-left: 4px solid #3F51B5;
+}
+
+/* フォーカス時のスタイル（キーボード操作用） */
+.minutes-table tbody tr:focus {
+  outline: 2px solid #3F51B5;
+  outline-offset: -2px;
+}
+
+/* アクセシビリティのための追加スタイル */
+.minutes-table tbody tr {
+  transition: background-color 0.2s, border-left 0.2s;
+}
