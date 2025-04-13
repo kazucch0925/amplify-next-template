@@ -3,7 +3,7 @@ import Button from './Button'
 import { FileUploader } from '@aws-amplify/ui-react-storage';
 import './UploadModal.css';
 import { remove } from 'aws-amplify/storage';
-import { getCurrentUser } from 'aws-amplify/auth';
+import { getCurrentUser, fetchUserAttributes } from 'aws-amplify/auth';
 
 interface UploadModalProps {
   onClose: () => void;
@@ -17,12 +17,21 @@ export default function UploadModal({ onClose, onUploadComplete }: UploadModalPr
     useEffect(() => {
       const setupUploadPath = async () => {
         try {
-          const user = await getCurrentUser();
-          const userSub = user.userId;
+          // 現在のユーザー情報を取得
+          const currentUser = await getCurrentUser();
+          const userAttributes = await fetchUserAttributes();
+          
+          // Cognitoの標準ユーザー識別子 - subを使用
+          const userSub = userAttributes.sub;
+          
           const path = isShared 
             ? 'minutes/shared/' 
             : `minutes/private/${userSub}/`;
+            
           console.log('Setting upload path:', path);
+          console.log('User sub:', userSub);
+          console.log('User ID from getCurrentUser:', currentUser.userId);
+          
           setUploadPath(path);
         } catch (error) {
           console.error('Error getting user ID:', error);

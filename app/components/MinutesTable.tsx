@@ -4,7 +4,7 @@
 import React, { useEffect, useState } from 'react';
 import { list, ListAllWithPathOutput, downloadData, remove } from 'aws-amplify/storage';
 import './MinutesTable.css';
-import { getCurrentUser } from 'aws-amplify/auth';
+import { getCurrentUser, fetchUserAttributes } from 'aws-amplify/auth';
 
 type StorageListOutput = ListAllWithPathOutput['items'];
 
@@ -39,9 +39,11 @@ export default function MinutesTable({ tableKey, searchKeyword = '', onSelectMin
     const fetchData = async () => {
       try {
         // 現在のユーザー情報を取得
-        const user = await getCurrentUser();
-        // userId ではなく sub を使用する（Cognito標準のユーザー識別子）
-        const userSub = user.userId;
+        const currentUser = await getCurrentUser();
+        const userAttributes = await fetchUserAttributes();
+          
+        // Cognitoの標準ユーザー識別子 - subを使用
+        const userSub = userAttributes.sub;
 
         // ユーザーのプライベートフォルダまたは共有フォルダのパスを指定
         const path = viewMode === 'private' 
@@ -49,6 +51,8 @@ export default function MinutesTable({ tableKey, searchKeyword = '', onSelectMin
           : 'minutes/shared/';
           
         console.log('Fetching minutes from path:', path);
+        console.log('User sub:', userSub);
+        console.log('User ID from getCurrentUser:', currentUser.userId);
 
         const result = await list({
           path: path,

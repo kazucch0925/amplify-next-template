@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import { uploadData } from 'aws-amplify/storage';
-import { getCurrentUser } from 'aws-amplify/auth';
+import { getCurrentUser, fetchUserAttributes } from 'aws-amplify/auth';
 import Button from './Button';
 import './CreateMinutesModal.css';
 
@@ -30,9 +30,11 @@ export default function CreateMinutesModal({ onClose, onCreateComplete }: Create
 
         try {
             // 現在のユーザー情報を取得
-            const user = await getCurrentUser();
-            // userId ではなく sub を使用する（Cognito標準のユーザー識別子）
-            const userSub = user.userId;
+            const currentUser = await getCurrentUser();
+            const userAttributes = await fetchUserAttributes();
+            
+            // Cognitoの標準ユーザー識別子 - subを使用
+            const userSub = userAttributes.sub;
             
             // タイトルから有効なファイル名を生成
             const fileName = `${title.replace(/[^a-z0-9]/gi, '_').toLowerCase()}_${Date.now()}.txt`;
@@ -43,6 +45,9 @@ export default function CreateMinutesModal({ onClose, onCreateComplete }: Create
                 : `minutes/private/${userSub}/${fileName}`;
             
             console.log('Uploading file to:', filePath);
+            console.log('User sub:', userSub);
+            console.log('User ID from getCurrentUser:', currentUser.userId);
+            console.log('All user attributes:', JSON.stringify(userAttributes, null, 2));
             
             // テキストファイルとして保存
             const textBlob = new Blob([content], { type: 'text/plain' });
