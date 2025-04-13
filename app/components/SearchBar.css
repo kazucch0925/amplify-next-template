@@ -4,8 +4,10 @@
   border: 2px solid #5C6BC0;
   background-color: white;
   border-radius: 20px;
-  padding: 5px;
-  margin: 20px;
+  padding: 8px;
+  margin: 0; /* マージンを削除 */
+  width: 100%; /* 幅を親要素に合わせる */
+  box-sizing: border-box; /* パディングとボーダーを幅に含める */
 }
 
 .search-input {
@@ -13,18 +15,52 @@
   border: none;
   outline: none;
   flex-grow: 1;
-  padding: 5px;
+  padding: 8px;
   border-radius: 20px;
+  font-size: 16px; /* モバイルでの入力を考慮 */
 }
 
 .icon-button {
   background: none;
   border: none;
-  padding: 5px;
+  padding: 8px;
   cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 36px; /* タップ領域の確保 */
+  min-height: 36px;
 }
 
 .search-icon, .clear-icon {
-  width: 16px;
-  height: 16px;
+  width: 20px;
+  height: 20px;
+}
+
+/* モバイル向けの調整 */
+@media screen and (max-width: 768px) {
+  .search-bar {
+    margin: 10px 0;
+    padding: 6px;
+  }
+
+  .icon-button {
+    min-width: 40px; /* タップ領域を広く */
+    min-height: 40px;
+  }
+
+  .search-input {
+    padding: 10px;
+  }
+}
+
+/* スマートフォン向けの追加調整 */
+@media screen and (max-width: 480px) {
+  .search-bar {
+    margin: 5px 0;
+  }
+
+  .search-input {
+    font-size: 14px;
+  }
 }

@@ -1,4 +1,4 @@
-.preview-container {
+.preview-component {
     height: 100%;
     display: flex;
     flex-direction: column;
@@ -30,7 +30,7 @@ h3 {
 }
 
 /* プレビューコンテナ自体の横幅を制御 */
-.preview-container {
+.preview-component {
     height: 100%;
     display: flex;
     flex-direction: column;

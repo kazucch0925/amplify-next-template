@@ -11,7 +11,6 @@ interface UploadModalProps {
 }
 
 export default function UploadModal({ onClose, onUploadComplete }: UploadModalProps) {
-    const [hasFile, setHasFile] = useState(false);
     const [isShared, setIsShared] = useState(false);
     const [uploadPath, setUploadPath] = useState('');
     
@@ -32,13 +31,14 @@ export default function UploadModal({ onClose, onUploadComplete }: UploadModalPr
       setupUploadPath();
     }, [isShared]);
 
-    const handleUploadComplete = () => {
-      console.log('handleUploadComplete called');
-      onClose();
-
-      if (onUploadComplete) {
-        onUploadComplete();
-      }
+    const handleUploadComplete = (result: any) => {
+      console.log('Upload completed:', result);
+      deleteTempFile(result.path).then(() => {
+        if (onUploadComplete) {
+          onUploadComplete();
+        }
+        onClose();
+      });
     }
 
   return (
@@ -57,26 +57,13 @@ export default function UploadModal({ onClose, onUploadComplete }: UploadModalPr
           </div>
           {uploadPath && (
             <FileUploader
-              acceptedFileTypes={[".pdf,.doc,.docx,.txt"]}
+              acceptedFileTypes={[".pdf", ".doc", ".docx", ".txt"]}
               path={uploadPath}
               maxFileCount={5}
               maxFileSize={10000}
-              onUploadSuccess={(result: any) => {
-                console.log(result);
-                deleteTempFile(result.path).then(() => {
-                  handleUploadComplete();
-                });
-              }}
+              onUploadSuccess={handleUploadComplete}
             />
           )}
-          <Button
-            onClick={onClose}
-            className="upload-modal-button"
-            colorScheme="primary"
-            disabled={!hasFile}
-          >
-            アップロード
-          </Button>
         </div>
         <button className="close-icon" onClick={onClose}>
           <img src='/icons/close-white-icon.png' alt='Close' />

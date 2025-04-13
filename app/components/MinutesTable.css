@@ -1,24 +1,100 @@
 .minutes-table-container {
-  overflow-y: auto;
-  overflow-x: auto;
-  height: 100%;
-  width: 100%;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
 }
 
+/* テーブルをラップする新しいスクロール可能なコンテナ */
+.table-scroll-container {
+  flex: 1;
+  overflow: auto;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  padding: 0;
+  margin: 0;
+}
+
+/* スクロール時のヘッダー固定を改善 */
 .minutes-table {
   border-collapse: collapse;
-  margin-bottom: 20px;
-  margin-top: -10px;
-  height: 100%;
   width: 100%;
-  min-width: 600px;
+  margin: 0;
+  padding: 0;
 }
 
 .minutes-table th,
 .minutes-table td {
-  border: 2px solid #ddd;
+  border: 1px solid #ddd;
   padding: 8px;
   text-align: left;
+}
+
+/* PC向けの列幅設定 */
+@media screen and (min-width: 769px) {
+  .minutes-table th,
+  .minutes-table td {
+    min-width: 100px;
+  }
+
+  .minutes-table th:first-child,
+  .minutes-table td:first-child {
+    width: 50px;
+    min-width: 50px;
+  }
+
+  .minutes-table th:nth-child(2),
+  .minutes-table td:nth-child(2) {
+    min-width: 200px;
+  }
+
+  .minutes-table th:last-child,
+  .minutes-table td:last-child,
+  .minutes-table th:nth-last-child(2),
+  .minutes-table td:nth-last-child(2) {
+    width: 80px;
+    min-width: 80px;
+  }
+}
+
+/* モバイル向けの調整 */
+@media screen and (max-width: 768px) {
+  .minutes-table th,
+  .minutes-table td {
+    padding: 12px 8px; /* タップしやすいサイズに */
+  }
+
+  /* ファイル名列以外を最小限に */
+  .minutes-table th:not(:nth-child(2)),
+  .minutes-table td:not(:nth-child(2)) {
+    width: auto;
+    min-width: 60px;
+  }
+
+  /* ファイル名列は残りのスペースを使用 */
+  .minutes-table th:nth-child(2),
+  .minutes-table td:nth-child(2) {
+    min-width: 120px;
+  }
+
+  .icon-button img {
+    width: 28px; /* モバイルでは小さめに */
+    height: 28px;
+  }
+}
+
+/* スマートフォン向けの追加調整 */
+@media screen and (max-width: 480px) {
+  .minutes-table th,
+  .minutes-table td {
+    padding: 10px 6px;
+    font-size: 14px;
+  }
+
+  .icon-button img {
+    width: 24px;
+    height: 24px;
+  }
 }
 
 .minutes-table th {
@@ -34,6 +110,7 @@
   height: 36px;
 }
 
+/* view-toggle スタイル */
 .view-toggle {
     display: flex;
     margin-bottom: 15px;
@@ -66,4 +143,27 @@
 .icon-button[disabled] {
     opacity: 0.5;
     cursor: not-allowed;
+}
+
+/* 行のホバー効果 */
+.minutes-table tbody tr:hover {
+  background-color: #f5f5f5;
+  transition: background-color 0.2s;
+}
+
+/* 選択された行のスタイル */
+.minutes-table tbody tr.selected-row {
+  background-color: #E8EAF6;
+  border-left: 4px solid #3F51B5;
+}
+
+/* フォーカス時のスタイル（キーボード操作用） */
+.minutes-table tbody tr:focus {
+  outline: 2px solid #3F51B5;
+  outline-offset: -2px;
+}
+
+/* アクセシビリティのための追加スタイル */
+.minutes-table tbody tr {
+  transition: background-color 0.2s, border-left 0.2s;
 }

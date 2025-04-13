@@ -9,14 +9,31 @@ import { getCurrentUser } from 'aws-amplify/auth';
 type StorageListOutput = ListAllWithPathOutput['items'];
 
 interface MinutesTableProps {
-  key: number;
+  tableKey: number;
+  searchKeyword?: string;
   onSelectMinute: (path: string) => void;
 }
 
-export default function MinutesTable({ key, onSelectMinute }: MinutesTableProps) {
-  const [minutes, setMinutes] = useState<StorageListOutput>([]);
+export default function MinutesTable({ tableKey, searchKeyword = '', onSelectMinute }: MinutesTableProps) {
+  const [allMinutes, setAllMinutes] = useState<StorageListOutput>([]);
+  const [filteredMinutes, setFilteredMinutes] = useState<StorageListOutput>([]);
   const [selectedPath, setSelectedPath] = useState<string>('');
   const [viewMode, setViewMode] = useState<'private' | 'shared'>('private');
+
+  // 検索キーワードが変更されたときにフィルタリングを実行
+  useEffect(() => {
+    if (!searchKeyword) {
+      setFilteredMinutes(allMinutes);
+      return;
+    }
+
+    const keyword = searchKeyword.toLowerCase();
+    const filtered = allMinutes.filter(minute => {
+      const fileName = minute.path.split('/').pop()?.toLowerCase() || '';
+      return fileName.includes(keyword);
+    });
+    setFilteredMinutes(filtered);
+  }, [searchKeyword, allMinutes]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -41,14 +58,15 @@ export default function MinutesTable({ key, onSelectMinute }: MinutesTableProps)
 
         const filteredItems = result.items.filter(item => !item.path.endsWith('/'));
         const sortedMinutes = sortMinutesByDate(filteredItems);
-        setMinutes(sortedMinutes);
+        setAllMinutes(sortedMinutes);
+        setFilteredMinutes(sortedMinutes);
       } catch (error) {
         console.error("Error fetching minutes:", error);
       }
     };
 
     fetchData();
-  }, [key, viewMode]);
+  }, [tableKey, viewMode]);
 
   const deleteFile = async (path: string) => {
     if (window.confirm('次のファイルを削除してもよろしいですか？: ' + path)) {
@@ -57,8 +75,9 @@ export default function MinutesTable({ key, onSelectMinute }: MinutesTableProps)
                 path,
             });
             console.log(`Deleted file: ${path}`);
-            const newMinutes = minutes.filter(item => item.path != path);
-            setMinutes(newMinutes);
+            const newMinutes = allMinutes.filter(item => item.path != path);
+            setAllMinutes(newMinutes);
+            setFilteredMinutes(newMinutes);
         } catch (error) {
             console.error("Error deleting file:", error);
             alert('ファイルの削除に失敗しました。再度実行してください。');
@@ -89,8 +108,8 @@ export default function MinutesTable({ key, onSelectMinute }: MinutesTableProps)
             共有議事録
           </button>
         </div>
-        <div className='minutes-table'>
-        <table>
+        <div className='table-scroll-container'>
+            <table className='minutes-table'>
             <thead>
             <tr>
                 <th>選択</th>
@@ -102,8 +121,31 @@ export default function MinutesTable({ key, onSelectMinute }: MinutesTableProps)
             </tr>
             </thead>
             <tbody>
-            {minutes.map((minute) => (
-                <tr key={minute.path}>
+            {filteredMinutes.map((minute) => (
+                <tr 
+                    key={minute.path}
+                    className={selectedPath === minute.path ? 'selected-row' : ''}
+                    onClick={(e) => {
+                        // ダウンロードボタンや削除ボタンがクリックされた場合は、行の選択を行わない
+                        if ((e.target as HTMLElement).closest('.icon-button')) {
+                            return;
+                        }
+                        setSelectedPath(minute.path);
+                        onSelectMinute(minute.path);
+                    }}
+                    style={{ cursor: 'pointer' }}
+                    role="button"
+                    aria-selected={selectedPath === minute.path}
+                    tabIndex={0} // キーボード操作可能に
+                    onKeyDown={(e) => {
+                        // Enterキーまたはスペースキーでも選択可能に
+                        if (e.key === 'Enter' || e.key === ' ') {
+                            e.preventDefault();
+                            setSelectedPath(minute.path);
+                            onSelectMinute(minute.path);
+                        }
+                    }}
+                >
                 <td>
                     <input
                         type="radio"
@@ -113,21 +155,31 @@ export default function MinutesTable({ key, onSelectMinute }: MinutesTableProps)
                             setSelectedPath(minute.path);
                             onSelectMinute(minute.path);
                         }}
+                        onClick={(e) => e.stopPropagation()} // イベントの伝播を停止
                     />
                 </td>
                 <td>{minute.path.split('/').pop() || ''}</td>
                 <td>{minute.lastModified ? new Date(minute.lastModified).toLocaleDateString() : ''}</td>
                 <td>{minute.size} bytes</td>
                 <td>
-                    <button onClick={() => downloadFile(minute.path)} className="icon-button">
-                    <img src="/icons/download-icon.png" alt="Download" />
+                    <button 
+                        onClick={(e) => {
+                            e.stopPropagation(); // イベントの伝播を停止
+                            downloadFile(minute.path);
+                        }} 
+                        className="icon-button"
+                    >
+                        <img src="/icons/download-icon.png" alt="Download" />
                     </button>
                 </td>
                 <td>
                     <button 
-                      onClick={() => deleteFile(minute.path)} 
-                      className="icon-button"
-                      disabled={viewMode === 'shared'}
+                        onClick={(e) => {
+                            e.stopPropagation(); // イベントの伝播を停止
+                            deleteFile(minute.path);
+                        }} 
+                        className="icon-button"
+                        disabled={viewMode === 'shared'}
                     >
                         <img src="/icons/delete-icon.png" alt="Delete" />
                     </button>

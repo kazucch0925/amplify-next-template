@@ -4,7 +4,6 @@ html, body {
   padding: 0;
 }
 
-
 /* ページ全体 */
 .minutes-page-container {
   padding: 0px;
@@ -26,41 +25,53 @@ h2 {
 /* 表（左）とプレビュー表示部（右）の関係 */
 .content {
   display: flex;
-  gap: 10px;
+  gap: 20px; /* 左右セクション間の間隔を広げる */
   flex-grow: 1;
   height: calc(100vh - 150px);
   margin-bottom: 20px;
+  padding: 0 20px; /* 左右に余白を追加 */
 }
 
 /* 表（左） */
 .left-section {
-  flex: 0 0 400px; /* 幅を固定 */
-  min-width: 400px; /* 最小幅を設定 */
+  flex: 1; /* 右セクションとの比率を調整 */
+  min-width: 300px; /* 最小幅を調整 */
+  max-width: 55%; /* 最大幅をさらに制限して右セクションとの重なりを防止 */
   display: flex;
   flex-direction: column;
   height: 100%;
-  margin-left: 20px;
   overflow: auto;
+  padding-right: 10px; /* 右側に余白を追加 */
 }
 
+/* 検索バーとボタンのコンテナ - 固定表示 */
 .search-upload-container {
   display: flex;
-  justify-content: space-between;
-  align-items: center;
+  flex-direction: column;
+  margin-bottom: 10px;
+  position: sticky;
+  top: 0;
+  background-color: white;
+  padding: 10px 0;
+  z-index: 10;
+  border-bottom: 1px solid #eee;
+  width: 100%; /* 親要素の幅に合わせる */
+  box-sizing: border-box; /* パディングとボーダーを幅に含める */
 }
 
 .search-upload-container > * {
-  margin-right: 0px;
+  margin-bottom: 10px;
 }
 
 .search-upload-container .search-bar {
-  flex: 1;
+  width: 100%;
 }
 
 .button-container {
   display: flex;
   gap: 10px;
   align-items: center;
+  justify-content: flex-end;
 }
 
 /* ボタンの共通スタイル */
@@ -100,17 +111,230 @@ h2 {
   margin-right: 10px;
 }
 
-/* プレビュー表示部（右） */
-.right-section {
-  flex: 1 1 auto; /* 残りのスペースを使用 */
+/* PC版のプレビュー表示部（右） */
+.right-section-pc {
+  flex: 1; /* 左セクションとの比率を調整 */
+  min-width: 300px; /* 最小限の幅を設定 */
   border: 1px solid #ccc;
   border-radius: 8px;
   padding: 20px;
-  margin-right: 20px;
-  margin-left: 20px;
   height: 100%;
   display: flex;
   flex-direction: column;
-  min-width: 0; /* flexboxの収縮を許可 */
-  overflow: hidden; /* 内容が溢れた場合は隠す */
+  overflow: auto; /* 内容が溢れた場合はスクロール可能に */
+}
+
+/* プレビューコンポーネントがPC版の右セクション内に表示される場合 */
+.right-section-pc .preview-component {
+  height: 100%;
+  width: 100%;
+}
+
+/* モバイル版のプレビュー関連要素（デフォルトで非表示） */
+.preview-close,
+.preview-handle,
+.preview-container,
+.right-section-mobile {
+  display: none;
+}
+
+/* モバイル向けのレイアウト調整 */
+@media screen and (max-width: 768px) {
+  .content {
+    flex-direction: column;
+    position: relative;
+    overflow: hidden;
+    padding: 0 10px; /* 左右の余白を調整 */
+  }
+
+  .left-section {
+    min-width: auto;
+    max-width: 100%; /* モバイルでは最大幅の制限を解除 */
+    flex: 1;
+    transition: transform 0.3s ease;
+  }
+
+  /* PC版のプレビュー部分を非表示 */
+  .right-section-pc {
+    display: none;
+  }
+
+  /* プレビューコンテナ（つまみとプレビュー部分を一体化） */
+  .preview-container {
+    display: flex;
+    position: fixed;
+    top: 0;
+    right: 0; /* 右端に配置 */
+    bottom: 0;
+    z-index: 1000;
+    transform: translateX(calc(100% - 8px)); /* つまみの一部だけ表示 */
+    transition: transform 0.3s ease;
+    width: 90%; /* 幅を固定 */
+    max-width: 400px; /* 最大幅を制限 */
+  }
+
+  /* プレビュー表示時 */
+  .preview-container.show {
+    transform: translateX(0); /* 完全に表示 */
+  }
+
+  /* プレビューつまみ（モバイル時のみ表示） */
+  .preview-handle {
+    display: flex;
+    position: absolute; /* 絶対位置指定に変更 */
+    left: 0; /* 左端に配置 */
+    top: 50%;
+    transform: translate(-100%, -50%); /* 左にずらして、縦方向に中央揃え */
+    width: 40px;
+    height: 140px;
+    background-color: #5C6BC0;
+    border-radius: 8px 0 0 8px;
+    cursor: grab;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    z-index: 1001;
+    touch-action: pan-x;
+    user-select: none;
+    box-shadow: -2px 0 5px rgba(0, 0, 0, 0.2);
+    transition: background-color 0.3s ease;
+  }
+
+  .preview-handle:active {
+    cursor: grabbing;
+  }
+
+  .preview-handle:hover {
+    background-color: #3F51B5;
+  }
+
+  /* つまみのテキスト */
+  .preview-handle-text {
+    writing-mode: vertical-rl;
+    text-orientation: mixed;
+    margin: 8px 0;
+    white-space: nowrap;
+    color: white;
+    font-size: 13px;
+    font-weight: 500;
+    letter-spacing: 1px;
+  }
+
+  /* 左向き矢印アイコン（閉じているときのみ表示） */
+  .preview-container:not(.show) .preview-handle::before {
+    content: '';
+    width: 0;
+    height: 0;
+    border-top: 8px solid transparent;
+    border-bottom: 8px solid transparent;
+    border-right: 12px solid white;
+    margin-bottom: 5px;
+  }
+
+  /* 右向き矢印アイコン（開いているときのみ表示） */
+  .preview-container.show .preview-handle::before {
+    content: '';
+    width: 0;
+    height: 0;
+    border-top: 8px solid transparent;
+    border-bottom: 8px solid transparent;
+    border-left: 12px solid white;
+    margin-bottom: 5px;
+  }
+
+  /* つまみのパルスアニメーション */
+  @keyframes pulse {
+    0% {
+      box-shadow: -2px 0 5px rgba(0, 0, 0, 0.2);
+    }
+    50% {
+      box-shadow: -2px 0 10px rgba(92, 107, 192, 0.6);
+    }
+    100% {
+      box-shadow: -2px 0 5px rgba(0, 0, 0, 0.2);
+    }
+  }
+
+  /* 非表示時のみアニメーション適用 */
+  .preview-container:not(.show) .preview-handle {
+    animation: pulse 2s infinite;
+  }
+
+  /* スライドプレビュー */
+  .right-section-mobile {
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    width: 100%; /* コンテナの幅いっぱいに */
+    margin: 0;
+    background: white;
+    z-index: 1000;
+    box-shadow: -2px 0 10px rgba(0, 0, 0, 0.1);
+    border-radius: 0;
+    overflow: auto;
+    height: 100%;
+    padding: 20px;
+  }
+
+  /* プレビューコンポーネントがモバイル版の右セクション内に表示される場合 */
+  .right-section-mobile .preview-component {
+    height: 100%;
+    width: 100%;
+  }
+
+  /* プレビューの閉じるボタン（モバイル時のみ表示） */
+  .preview-close {
+    display: block;
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: none;
+    border: none;
+    padding: 8px;
+    cursor: pointer;
+    z-index: 1001;
+  }
+
+  .preview-close img {
+    width: 24px;
+    height: 24px;
+  }
+
+  /* プレビュー表示時の背景オーバーレイ */
+  .preview-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.3);
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease;
+    z-index: 999;
+  }
+
+  .preview-overlay.show {
+    opacity: 1;
+    visibility: visible;
+  }
+
+  /* ドラッグ中は遷移を無効化 */
+  .preview-container.dragging {
+    transition: none;
+  }
+}
+
+/* スマートフォン向けの追加調整 */
+@media screen and (max-width: 480px) {
+  .button-container {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  /* スマホでは画面いっぱいに表示 */
+  .preview-container {
+    width: calc(100% - 36px); /* つまみの幅を考慮 */
+    max-width: none;
+  }
 }

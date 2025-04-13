@@ -15,12 +15,18 @@ export default function CreateMinutesModal({ onClose, onCreateComplete }: Create
     const [title, setTitle] = useState('');
     const [content, setContent] = useState('');
     const [isShared, setIsShared] = useState(false);
+    const [isSaving, setIsSaving] = useState(false);
+    
+    // フォームの入力状態を監視
+    const isFormValid = title.trim() !== '' && content.trim() !== '';
 
     const handleCreate = async () => {
-        if (!title.trim()) {
-            alert('タイトルを入力してください。');
+        if (!isFormValid) {
+            alert('タイトルと内容を入力してください。');
             return;
         }
+
+        setIsSaving(true);
 
         try {
             // 現在のユーザー情報を取得
@@ -36,34 +42,38 @@ export default function CreateMinutesModal({ onClose, onCreateComplete }: Create
                 : `minutes/private/${userId}/${fileName}`;
             
             // テキストファイルとして保存
-            await uploadData({
-                key: filePath,
-                data: content,
-                options: {
-                    contentType: 'text/plain'
-                }
-            });
+            const textBlob = new Blob([content], { type: 'text/plain' });
             
-            onCreateComplete();
+            await uploadData({
+                data: textBlob,
+                path: filePath
+            }).result;
+            
+            // ファイルの保存が確実に完了するまで待機
+            await new Promise(resolve => setTimeout(resolve, 1000));
+            
+            // 完了後にコールバックを実行
+            if (onCreateComplete) {
+                onCreateComplete();
+            }
             onClose();
         } catch (error) {
             console.error('Error creating minutes:', error);
-            alert('議事録の作成に失敗しました。');
+            const errorMessage = error instanceof Error ? error.message : String(error);
+            alert(`議事録の作成に失敗しました。\nエラー: ${errorMessage}`);
+        } finally {
+            setIsSaving(false);
         }
     };
 
     return (
-        <div className="modal-overlay">
-            <div className="create-minutes-modal">
-                <div className="modal-header">
+        <div className="modal-overlay" onClick={onClose}>
+            <div className="modal-container">
+                <div className="modal-content" onClick={(e) => e.stopPropagation()}>
                     <h3>議事録の新規作成</h3>
-                    <button className="close-button" onClick={onClose}>
-                        <img src="/icons/close-black-icon.png" alt="Close" />
-                    </button>
-                </div>
-                <div className="modal-content">
+                <div className="modal-body">
                     <div className="input-group">
-                        <label htmlFor="title">タイトル</label>
+                        <label htmlFor="title">ファイル名</label>
                         <input
                             type="text"
                             id="title"
@@ -94,18 +104,18 @@ export default function CreateMinutesModal({ onClose, onCreateComplete }: Create
                 </div>
                 <div className="modal-footer">
                     <Button
-                        onClick={onClose}
-                        className="cancel-button"
-                    >
-                        キャンセル
-                    </Button>
-                    <Button
                         onClick={handleCreate}
-                        className="create-button"
+                        className="create-modal-button"
+                        colorScheme="primary"
+                        disabled={!isFormValid || isSaving}
                     >
-                        作成
+                        {isSaving ? '保存中...' : '作成'}
                     </Button>
                 </div>
+                </div>
+                <button className="close-icon" onClick={onClose}>
+                    <img src='/icons/close-white-icon.png' alt='Close' />
+                </button>
             </div>
         </div>
     );
