@@ -4,6 +4,7 @@
 import React, { useEffect, useState } from 'react';
 import { list, ListAllWithPathOutput, downloadData, remove } from 'aws-amplify/storage';
 import './MinutesTable.css';
+import { getCurrentUser } from 'aws-amplify/auth';
 
 type StorageListOutput = ListAllWithPathOutput['items'];
 
@@ -15,12 +16,22 @@ interface MinutesTableProps {
 export default function MinutesTable({ key, onSelectMinute }: MinutesTableProps) {
   const [minutes, setMinutes] = useState<StorageListOutput>([]);
   const [selectedPath, setSelectedPath] = useState<string>('');
+  const [viewMode, setViewMode] = useState<'private' | 'shared'>('private');
 
   useEffect(() => {
     const fetchData = async () => {
       try {
+        // 現在のユーザー情報を取得
+        const user = await getCurrentUser();
+        const userId = user.userId;
+
+        // ユーザーのプライベートフォルダまたは共有フォルダのパスを指定
+        const path = viewMode === 'private' 
+          ? `minutes/private/${userId}/` 
+          : 'minutes/shared/';
+
         const result = await list({
-          path: 'minutes/',
+          path: path,
           options: {
             listAll: true,
           },
@@ -28,24 +39,24 @@ export default function MinutesTable({ key, onSelectMinute }: MinutesTableProps)
 
         console.log('Fetched data:', JSON.stringify(result, null, 2));
 
-        const filteredItems = result.items.filter(item => !item.path.endsWith('/') && item.path.startsWith('minutes/'));
+        const filteredItems = result.items.filter(item => !item.path.endsWith('/'));
         const sortedMinutes = sortMinutesByDate(filteredItems);
-        setMinutes(filteredItems);
+        setMinutes(sortedMinutes);
       } catch (error) {
         console.error("Error fetching minutes:", error);
       }
     };
 
     fetchData();
-  }, [key]);
+  }, [key, viewMode]);
 
   const deleteFile = async (path: string) => {
-    if (window.confirm('次のファイルを削除してもよろしいですか？:' + {path})) {
+    if (window.confirm('次のファイルを削除してもよろしいですか？: ' + path)) {
         try {
             await remove({
                 path,
             });
-            console.log('Deleted file: ${path}');
+            console.log(`Deleted file: ${path}`);
             const newMinutes = minutes.filter(item => item.path != path);
             setMinutes(newMinutes);
         } catch (error) {
@@ -64,6 +75,20 @@ export default function MinutesTable({ key, onSelectMinute }: MinutesTableProps)
 
   return (
     <div className='minutes-table-container'>
+        <div className="view-toggle">
+          <button 
+            className={viewMode === 'private' ? 'active' : ''}
+            onClick={() => setViewMode('private')}
+          >
+            マイ議事録
+          </button>
+          <button 
+            className={viewMode === 'shared' ? 'active' : ''}
+            onClick={() => setViewMode('shared')}
+          >
+            共有議事録
+          </button>
+        </div>
         <div className='minutes-table'>
         <table>
             <thead>
@@ -90,7 +115,7 @@ export default function MinutesTable({ key, onSelectMinute }: MinutesTableProps)
                         }}
                     />
                 </td>
-                <td>{minute.path.replace(/^minutes\/|\\/g, '')}</td>
+                <td>{minute.path.split('/').pop() || ''}</td>
                 <td>{minute.lastModified ? new Date(minute.lastModified).toLocaleDateString() : ''}</td>
                 <td>{minute.size} bytes</td>
                 <td>
@@ -99,7 +124,11 @@ export default function MinutesTable({ key, onSelectMinute }: MinutesTableProps)
                     </button>
                 </td>
                 <td>
-                    <button onClick={() => deleteFile(minute.path)} className="icon-button">
+                    <button 
+                      onClick={() => deleteFile(minute.path)} 
+                      className="icon-button"
+                      disabled={viewMode === 'shared'}
+                    >
                         <img src="/icons/delete-icon.png" alt="Delete" />
                     </button>
                 </td>

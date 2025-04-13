@@ -3,9 +3,13 @@ import { defineStorage } from '@aws-amplify/backend';
 export const storage = defineStorage({
   name: 'docuhubMinutes',
   access: (allow) => ({
-    'minutes/*': [
-        allow.guest.to(['read', 'write', 'delete']),
-        allow.authenticated.to(['read', 'write', 'delete'])
+    // ユーザーごとのプライベートフォルダ
+    'minutes/private/${user.sub}/*': [
+      allow.authenticated.to(['read', 'write', 'delete']),
+    ],
+    // 共有フォルダ（認証済みユーザー全員が読み取りと書き込み可能）
+    'minutes/shared/*': [
+      allow.authenticated.to(['read', 'write', 'delete']),
     ]
   })
 });

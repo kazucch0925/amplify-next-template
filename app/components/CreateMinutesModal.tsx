@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react';
 import { uploadData } from 'aws-amplify/storage';
+import { getCurrentUser } from 'aws-amplify/auth';
 import Button from './Button';
 import './CreateMinutesModal.css';
 
@@ -13,6 +14,7 @@ interface CreateMinutesModalProps {
 export default function CreateMinutesModal({ onClose, onCreateComplete }: CreateMinutesModalProps) {
     const [title, setTitle] = useState('');
     const [content, setContent] = useState('');
+    const [isShared, setIsShared] = useState(false);
 
     const handleCreate = async () => {
         if (!title.trim()) {
@@ -21,12 +23,21 @@ export default function CreateMinutesModal({ onClose, onCreateComplete }: Create
         }
 
         try {
+            // 現在のユーザー情報を取得
+            const user = await getCurrentUser();
+            const userId = user.userId;
+            
             // タイトルから有効なファイル名を生成
             const fileName = `${title.replace(/[^a-z0-9]/gi, '_').toLowerCase()}_${Date.now()}.txt`;
             
+            // ファイルの保存先を決定（プライベートか共有か）
+            const filePath = isShared
+                ? `minutes/shared/${fileName}`
+                : `minutes/private/${userId}/${fileName}`;
+            
             // テキストファイルとして保存
             await uploadData({
-                key: fileName,
+                key: filePath,
                 data: content,
                 options: {
                     contentType: 'text/plain'
@@ -70,6 +81,15 @@ export default function CreateMinutesModal({ onClose, onCreateComplete }: Create
                             placeholder="議事録の内容を入力..."
                             rows={15}
                         />
+                    </div>
+                    <div className="input-group checkbox">
+                        <input
+                            type="checkbox"
+                            id="isShared"
+                            checked={isShared}
+                            onChange={(e) => setIsShared(e.target.checked)}
+                        />
+                        <label htmlFor="isShared">全員と共有する</label>
                     </div>
                 </div>
                 <div className="modal-footer">
