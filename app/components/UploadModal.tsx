@@ -18,10 +18,11 @@ export default function UploadModal({ onClose, onUploadComplete }: UploadModalPr
       const setupUploadPath = async () => {
         try {
           const user = await getCurrentUser();
-          const userId = user.userId;
+          const userSub = user.userId;
           const path = isShared 
             ? 'minutes/shared/' 
-            : `minutes/private/${userId}/`;
+            : `minutes/private/${userSub}/`;
+          console.log('Setting upload path:', path);
           setUploadPath(path);
         } catch (error) {
           console.error('Error getting user ID:', error);

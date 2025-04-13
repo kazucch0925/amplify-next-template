@@ -40,12 +40,15 @@ export default function MinutesTable({ tableKey, searchKeyword = '', onSelectMin
       try {
         // 現在のユーザー情報を取得
         const user = await getCurrentUser();
-        const userId = user.userId;
+        // userId ではなく sub を使用する（Cognito標準のユーザー識別子）
+        const userSub = user.userId;
 
         // ユーザーのプライベートフォルダまたは共有フォルダのパスを指定
         const path = viewMode === 'private' 
-          ? `minutes/private/${userId}/` 
+          ? `minutes/private/${userSub}/` 
           : 'minutes/shared/';
+          
+        console.log('Fetching minutes from path:', path);
 
         const result = await list({
           path: path,

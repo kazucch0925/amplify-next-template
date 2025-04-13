@@ -31,7 +31,8 @@ export default function CreateMinutesModal({ onClose, onCreateComplete }: Create
         try {
             // 現在のユーザー情報を取得
             const user = await getCurrentUser();
-            const userId = user.userId;
+            // userId ではなく sub を使用する（Cognito標準のユーザー識別子）
+            const userSub = user.userId;
             
             // タイトルから有効なファイル名を生成
             const fileName = `${title.replace(/[^a-z0-9]/gi, '_').toLowerCase()}_${Date.now()}.txt`;
@@ -39,7 +40,9 @@ export default function CreateMinutesModal({ onClose, onCreateComplete }: Create
             // ファイルの保存先を決定（プライベートか共有か）
             const filePath = isShared
                 ? `minutes/shared/${fileName}`
-                : `minutes/private/${userId}/${fileName}`;
+                : `minutes/private/${userSub}/${fileName}`;
+            
+            console.log('Uploading file to:', filePath);
             
             // テキストファイルとして保存
             const textBlob = new Blob([content], { type: 'text/plain' });
