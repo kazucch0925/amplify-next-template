@@ -132,3 +132,35 @@
 .minutes-table tbody tr {
   transition: background-color 0.2s, border-left 0.2s;
 }
+
+/* スクリーンリーダー専用のテキスト */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}
+
+/* キーボードフォーカス時のスタイル強化 */
+:focus-visible {
+  outline: 3px solid #3F51B5;
+  outline-offset: 2px;
+  box-shadow: 0 0 0 3px rgba(63, 81, 181, 0.4);
+}
+
+/* アクセシビリティ向上のためのインタラクション状態の視覚的フィードバック */
+.icon-button:focus-visible {
+  outline: 2px solid #3F51B5;
+  outline-offset: 2px;
+}
+
+.minutes-table tbody tr:focus-visible {
+  outline: 2px solid #3F51B5;
+  outline-offset: -2px;
+  box-shadow: inset 0 0 0 2px rgba(63, 81, 181, 0.4);
+}

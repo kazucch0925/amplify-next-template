@@ -115,25 +115,26 @@ export default function Minutes() {
     return (
         <Authenticator>
             {({ signOut, user }) => (
-                <main>
+                <main aria-label="議事録管理システム">
                     <div className="minutes-page-container">
                         <TopBar isLoggedIn={true} />
-                        <h2>議事録一覧</h2>
+                        <h1 className="page-title">議事録一覧</h1>
                         <div className="content">
-                            <div className="left-section">
-                                <div className="search-upload-container">
+                            <section className="left-section" aria-label="議事録一覧セクション">
+                                <div className="search-upload-container" role="search" aria-label="議事録検索">
                                     <SearchBar 
                                         placeholder="議事録を検索..." 
                                         onSearch={setSearchKeyword}
                                     />
-                                    <div className="button-container">
+                                    <div className="button-container" role="toolbar" aria-label="議事録操作">
                                         <Button
                                             onClick={() => {
                                                 handleOpenUploadModal();
                                             }}
                                             className="upload-button"
                                             iconSrc={"/icons/upload-white-icon.png"}
-                                            altText={"Upload-icon"}
+                                            altText={"アップロードアイコン"}
+                                            aria-label="議事録をアップロード"
                                         >
                                             アップロード...
                                         </Button>
@@ -143,7 +144,8 @@ export default function Minutes() {
                                             }}
                                             className="create-button"
                                             iconSrc={"/icons/create-white-icon.png"}
-                                            altText={"Create-icon"}
+                                            altText={"作成アイコン"}
+                                            aria-label="新しい議事録を作成"
                                         >
                                             新規作成
                                         </Button>
@@ -154,16 +156,18 @@ export default function Minutes() {
                                     searchKeyword={searchKeyword}
                                     onSelectMinute={(path) => showPreview(path)}
                                 />
-                            </div>
+                            </section>
                             {/* PC版のプレビュー表示部分 */}
-                            <div className="right-section-pc">
+                            <section className="right-section-pc" aria-label="議事録プレビューセクション">
                                 <Preview selectedPath={selectedMinutePath} />
-                            </div>
+                            </section>
                             
                             {/* モバイル版のプレビューコンテナ（つまみとプレビュー部分を一体化） */}
                             <div 
                                 ref={rightSectionRef}
                                 className={`preview-container ${isPreviewVisible ? 'show' : ''}`}
+                                role="complementary"
+                                aria-label="モバイル用プレビュー"
                             >
                                 {/* プレビューつまみ */}
                                 <div 
@@ -172,14 +176,28 @@ export default function Minutes() {
                                     onClick={() => setIsPreviewVisible(!isPreviewVisible)}
                                     onMouseDown={handleTouchStart}
                                     onTouchStart={handleTouchStart}
+                                    role="button"
+                                    aria-label={isPreviewVisible ? "プレビューを閉じる" : "プレビューを開く"}
+                                    aria-expanded={isPreviewVisible}
+                                    tabIndex={0}
+                                    onKeyDown={(e) => {
+                                        if (e.key === 'Enter' || e.key === ' ') {
+                                            e.preventDefault();
+                                            setIsPreviewVisible(!isPreviewVisible);
+                                        }
+                                    }}
                                 >
                                     <div className="preview-handle-text">プレビュー表示</div>
                                 </div>
                                 
                                 {/* モバイル版のプレビュー本体 */}
-                                <div className="right-section-mobile">
-                                    <button className="preview-close" onClick={hidePreview}>
-                                        <img src="/icons/close-black-icon.png" alt="Close" />
+                                <div className="right-section-mobile" role="region" aria-label="議事録プレビュー">
+                                    <button 
+                                        className="preview-close" 
+                                        onClick={hidePreview}
+                                        aria-label="プレビューを閉じる"
+                                    >
+                                        <img src="/icons/close-black-icon.png" alt="閉じる" />
                                     </button>
                                     <Preview selectedPath={selectedMinutePath} />
                                 </div>
@@ -188,6 +206,8 @@ export default function Minutes() {
                                 <div 
                                     className={`preview-overlay ${isPreviewVisible ? 'show' : ''}`}
                                     onClick={hidePreview}
+                                    role="presentation"
+                                    aria-hidden="true"
                                 />
                             )}
                         </div>

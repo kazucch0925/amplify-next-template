@@ -17,6 +17,9 @@ export default function MinutesTable({ tableKey, searchKeyword = '', onSelectMin
   const [allMinutes, setAllMinutes] = useState<StorageListOutput>([]);
   const [filteredMinutes, setFilteredMinutes] = useState<StorageListOutput>([]);
   const [selectedPath, setSelectedPath] = useState<string>('');
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [error, setError] = useState<string | null>(null);
+  const [retryCount, setRetryCount] = useState<number>(0);
 
   // 検索キーワードが変更されたときにフィルタリングを実行
   useEffect(() => {
@@ -35,6 +38,9 @@ export default function MinutesTable({ tableKey, searchKeyword = '', onSelectMin
 
   useEffect(() => {
     const fetchData = async () => {
+      setIsLoading(true);
+      setError(null);
+      
       try {
         const result = await list({
           path: 'minutes/',
@@ -51,11 +57,19 @@ export default function MinutesTable({ tableKey, searchKeyword = '', onSelectMin
         setFilteredMinutes(sortedMinutes);
       } catch (error) {
         console.error("Error fetching minutes:", error);
+        setError("議事録の取得中にエラーが発生しました。ネットワーク接続を確認してください。");
+      } finally {
+        setIsLoading(false);
       }
     };
 
     fetchData();
-  }, [tableKey]);
+  }, [tableKey, retryCount]);
+
+  // データ取得を再試行する関数
+  const handleRetry = () => {
+    setRetryCount(prevCount => prevCount + 1);
+  };
 
   const deleteFile = async (path: string) => {
     if (window.confirm('次のファイルを削除してもよろしいですか？:' + {path})) {
@@ -81,22 +95,82 @@ export default function MinutesTable({ tableKey, searchKeyword = '', onSelectMin
         return dateB - dateA;
     });
 
+  // スケルトンローディングコンポーネント
+  const TableSkeleton = () => (
+    <tbody className="skeleton-loading">
+      {[...Array(5)].map((_, index) => (
+        <tr key={`skeleton-${index}`} className="skeleton-row">
+          <td><div className="skeleton-circle"></div></td>
+          <td><div className="skeleton-text"></div></td>
+          <td><div className="skeleton-text skeleton-text-short"></div></td>
+          <td><div className="skeleton-text skeleton-text-short"></div></td>
+          <td><div className="skeleton-circle"></div></td>
+          <td><div className="skeleton-circle"></div></td>
+        </tr>
+      ))}
+    </tbody>
+  );
+
+  // エラーメッセージコンポーネント
+  const ErrorMessage = () => (
+    <div className="error-container" role="alert">
+      <div className="error-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <circle cx="12" cy="12" r="10"></circle>
+          <line x1="12" y1="8" x2="12" y2="12"></line>
+          <line x1="12" y1="16" x2="12.01" y2="16"></line>
+        </svg>
+      </div>
+      <div className="error-message">
+        <h3>エラーが発生しました</h3>
+        <p>{error}</p>
+      </div>
+      <button 
+        onClick={handleRetry} 
+        className="retry-button"
+        aria-label="データの取得を再試行"
+      >
+        再試行
+      </button>
+    </div>
+  );
+
   return (
     <div className='minutes-table-container'>
         <div className='table-scroll-container'>
-            <table className='minutes-table'>
+            <table className='minutes-table' aria-label="議事録一覧">
+            <caption className="sr-only">議事録ファイルの一覧です。選択するとプレビューが表示されます。</caption>
             <thead>
             <tr>
-                <th>選択</th>
-                <th>ファイル名</th>
-                <th>更新日</th>
-                <th>サイズ</th>
-                <th>ダウンロード</th>
-                <th>削除</th>
+                <th scope="col" aria-sort="none">選択</th>
+                <th scope="col" aria-sort="none">ファイル名</th>
+                <th scope="col" aria-sort="descending">更新日</th>
+                <th scope="col" aria-sort="none">サイズ</th>
+                <th scope="col" aria-sort="none">ダウンロード</th>
+                <th scope="col" aria-sort="none">削除</th>
             </tr>
             </thead>
-            <tbody>
-            {filteredMinutes.map((minute) => (
+            {isLoading ? (
+              <TableSkeleton />
+            ) : error ? (
+              <tbody>
+                <tr>
+                  <td colSpan={6}>
+                    <ErrorMessage />
+                  </td>
+                </tr>
+              </tbody>
+            ) : filteredMinutes.length === 0 ? (
+              <tbody>
+                <tr>
+                  <td colSpan={6} className="no-data-message">
+                    表示する議事録がありません
+                  </td>
+                </tr>
+              </tbody>
+            ) : (
+              <tbody>
+              {filteredMinutes.map((minute) => (
                 <tr 
                     key={minute.path}
                     className={selectedPath === minute.path ? 'selected-row' : ''}
@@ -143,8 +217,9 @@ export default function MinutesTable({ tableKey, searchKeyword = '', onSelectMin
                             downloadFile(minute.path);
                         }} 
                         className="icon-button"
+                        aria-label={`${minute.path.replace(/^minutes\/|\\/g, '')}をダウンロード`}
                     >
-                        <img src="/icons/download-icon.png" alt="Download" />
+                        <img src="/icons/download-icon.png" alt="ダウンロード" />
                     </button>
                 </td>
                 <td>
@@ -154,13 +229,15 @@ export default function MinutesTable({ tableKey, searchKeyword = '', onSelectMin
                             deleteFile(minute.path);
                         }} 
                         className="icon-button"
+                        aria-label={`${minute.path.replace(/^minutes\/|\\/g, '')}を削除`}
                     >
-                        <img src="/icons/delete-icon.png" alt="Delete" />
+                        <img src="/icons/delete-icon.png" alt="削除" />
                     </button>
                 </td>
                 </tr>
             ))}
-            </tbody>
+              </tbody>
+            )}
         </table>
         </div>
     </div>
