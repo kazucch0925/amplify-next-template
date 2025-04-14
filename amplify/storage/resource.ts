@@ -4,7 +4,7 @@ export const storage = defineStorage({
   name: 'docuhubMinutes',
   access: (allow) => ({
     // バケット全体へのリスト操作権限を追加
-    'minutes': [
+    'minutes/': [
       allow.authenticated.to(['list']),
     ],
     // ユーザーごとのプライベートフォルダ
