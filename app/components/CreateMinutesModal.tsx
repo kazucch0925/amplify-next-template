@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react';
 import { uploadData } from 'aws-amplify/storage';
+import { getCurrentUser, fetchUserAttributes } from 'aws-amplify/auth';
 import Button from './Button';
 import './CreateMinutesModal.css';
 
@@ -13,23 +14,48 @@ interface CreateMinutesModalProps {
 export default function CreateMinutesModal({ onClose, onCreateComplete }: CreateMinutesModalProps) {
     const [title, setTitle] = useState('');
     const [content, setContent] = useState('');
+    const [isShared, setIsShared] = useState(false);
     const [isSaving, setIsSaving] = useState(false);
     
     // フォームの入力状態を監視
     const isFormValid = title.trim() !== '' && content.trim() !== '';
 
     const handleCreate = async () => {
+        if (!isFormValid) {
+            alert('タイトルと内容を入力してください。');
+            return;
+        }
+
         setIsSaving(true);
 
         try {
+            // 現在のユーザー情報を取得
+            const currentUser = await getCurrentUser();
+            const userAttributes = await fetchUserAttributes();
+            
+            // Cognitoの標準ユーザー識別子 - subを使用
+            const userSub = userAttributes.sub;
+            
             // タイトルから有効なファイル名を生成
-            const fileName = `minutes/${title}.txt`;
+            const fileName = `${title.replace(/[^a-z0-9]/gi, '_').toLowerCase()}_${Date.now()}.txt`;
+            
+            // ファイルの保存先を決定（プライベートか共有か）
+            const filePath = isShared
+                ? `minutes/shared/${fileName}`
+                : `minutes/private/${userSub}/${fileName}`;
+            
+            console.log('Uploading file to:', filePath);
+            console.log('User sub:', userSub);
+            console.log('User ID from getCurrentUser:', currentUser.userId);
+            console.log('All user attributes:', JSON.stringify(userAttributes, null, 2));
             
             // テキストファイルとして保存
+            const textBlob = new Blob([content], { type: 'text/plain' });
+            
             await uploadData({
-                data: content,
-                path: fileName
-            });
+                data: textBlob,
+                path: filePath
+            }).result;
             
             // ファイルの保存が確実に完了するまで待機
             await new Promise(resolve => setTimeout(resolve, 1000));
@@ -73,6 +99,15 @@ export default function CreateMinutesModal({ onClose, onCreateComplete }: Create
                             placeholder="議事録の内容を入力..."
                             rows={15}
                         />
+                    </div>
+                    <div className="input-group checkbox">
+                        <input
+                            type="checkbox"
+                            id="isShared"
+                            checked={isShared}
+                            onChange={(e) => setIsShared(e.target.checked)}
+                        />
+                        <label htmlFor="isShared">全員と共有する</label>
                     </div>
                 </div>
                 <div className="modal-footer">

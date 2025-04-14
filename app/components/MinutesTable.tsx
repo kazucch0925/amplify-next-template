@@ -4,6 +4,7 @@
 import React, { useEffect, useState } from 'react';
 import { list, ListAllWithPathOutput, downloadData, remove } from 'aws-amplify/storage';
 import './MinutesTable.css';
+import { getCurrentUser, fetchUserAttributes } from 'aws-amplify/auth';
 
 type StorageListOutput = ListAllWithPathOutput['items'];
 
@@ -20,6 +21,7 @@ export default function MinutesTable({ tableKey, searchKeyword = '', onSelectMin
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
   const [retryCount, setRetryCount] = useState<number>(0);
+  const [viewMode, setViewMode] = useState<'private' | 'shared'>('private');
 
   // 検索キーワードが変更されたときにフィルタリングを実行
   useEffect(() => {
@@ -30,7 +32,7 @@ export default function MinutesTable({ tableKey, searchKeyword = '', onSelectMin
 
     const keyword = searchKeyword.toLowerCase();
     const filtered = allMinutes.filter(minute => {
-      const fileName = minute.path.replace(/^minutes\/|\\/g, '').toLowerCase();
+      const fileName = minute.path.split('/').pop()?.toLowerCase() || '';
       return fileName.includes(keyword);
     });
     setFilteredMinutes(filtered);
@@ -38,12 +40,25 @@ export default function MinutesTable({ tableKey, searchKeyword = '', onSelectMin
 
   useEffect(() => {
     const fetchData = async () => {
-      setIsLoading(true);
-      setError(null);
-      
       try {
+        // 現在のユーザー情報を取得
+        const currentUser = await getCurrentUser();
+        const userAttributes = await fetchUserAttributes();
+          
+        // Cognitoの標準ユーザー識別子 - subを使用
+        const userSub = userAttributes.sub;
+
+        // ユーザーのプライベートフォルダまたは共有フォルダのパスを指定
+        const path = viewMode === 'private' 
+          ? `minutes/private/${userSub}/` 
+          : 'minutes/shared/';
+          
+        console.log('Fetching minutes from path:', path);
+        console.log('User sub:', userSub);
+        console.log('User ID from getCurrentUser:', currentUser.userId);
+
         const result = await list({
-          path: 'minutes/',
+          path: path,
           options: {
             listAll: true,
           },
@@ -51,7 +66,7 @@ export default function MinutesTable({ tableKey, searchKeyword = '', onSelectMin
 
         console.log('Fetched data:', JSON.stringify(result, null, 2));
 
-        const filteredItems = result.items.filter(item => !item.path.endsWith('/') && item.path.startsWith('minutes/'));
+        const filteredItems = result.items.filter(item => !item.path.endsWith('/'));
         const sortedMinutes = sortMinutesByDate(filteredItems);
         setAllMinutes(sortedMinutes);
         setFilteredMinutes(sortedMinutes);
@@ -64,7 +79,7 @@ export default function MinutesTable({ tableKey, searchKeyword = '', onSelectMin
     };
 
     fetchData();
-  }, [tableKey, retryCount]);
+  }, [tableKey, retryCount, viewMode]);
 
   // データ取得を再試行する関数
   const handleRetry = () => {
@@ -72,12 +87,12 @@ export default function MinutesTable({ tableKey, searchKeyword = '', onSelectMin
   };
 
   const deleteFile = async (path: string) => {
-    if (window.confirm('次のファイルを削除してもよろしいですか？:' + {path})) {
+    if (window.confirm('次のファイルを削除してもよろしいですか？: ' + path)) {
         try {
             await remove({
                 path,
             });
-            console.log('Deleted file: ${path}');
+            console.log(`Deleted file: ${path}`);
             const newMinutes = allMinutes.filter(item => item.path != path);
             setAllMinutes(newMinutes);
             setFilteredMinutes(newMinutes);
@@ -137,6 +152,20 @@ export default function MinutesTable({ tableKey, searchKeyword = '', onSelectMin
 
   return (
     <div className='minutes-table-container'>
+        <div className="view-toggle">
+          <button 
+            className={viewMode === 'private' ? 'active' : ''}
+            onClick={() => setViewMode('private')}
+          >
+            マイ議事録
+          </button>
+          <button 
+            className={viewMode === 'shared' ? 'active' : ''}
+            onClick={() => setViewMode('shared')}
+          >
+            共有議事録
+          </button>
+        </div>
         <div className='table-scroll-container'>
             <table className='minutes-table' aria-label="議事録一覧">
             <caption className="sr-only">議事録ファイルの一覧です。選択するとプレビューが表示されます。</caption>
@@ -207,7 +236,7 @@ export default function MinutesTable({ tableKey, searchKeyword = '', onSelectMin
                         onClick={(e) => e.stopPropagation()} // イベントの伝播を停止
                     />
                 </td>
-                <td>{minute.path.replace(/^minutes\/|\\/g, '')}</td>
+                <td>{minute.path.split('/').pop() || ''}</td>
                 <td>{minute.lastModified ? new Date(minute.lastModified).toLocaleDateString() : ''}</td>
                 <td>{minute.size} bytes</td>
                 <td>
@@ -230,6 +259,7 @@ export default function MinutesTable({ tableKey, searchKeyword = '', onSelectMin
                         }} 
                         className="icon-button"
                         aria-label={`${minute.path.replace(/^minutes\/|\\/g, '')}を削除`}
+                        disabled={viewMode === 'shared'}
                     >
                         <img src="/icons/delete-icon.png" alt="削除" />
                     </button>

@@ -73,6 +73,21 @@
   min-height: 200px;
 }
 
+.input-group.checkbox {
+    display: flex;
+    align-items: center;
+    margin-top: 15px;
+}
+
+.input-group.checkbox input {
+    margin-right: 8px;
+    width: auto;
+}
+
+.input-group.checkbox label {
+    margin: 0;
+}
+
 .modal-footer {
   display: flex;
   justify-content: flex-end;

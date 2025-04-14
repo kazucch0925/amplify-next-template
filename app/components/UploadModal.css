@@ -178,3 +178,13 @@ h3 {
   margin-left: auto;
   margin-top: 10px;
 }
+
+.sharing-option {
+    display: flex;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+.sharing-option input {
+    margin-right: 8px;
+}
