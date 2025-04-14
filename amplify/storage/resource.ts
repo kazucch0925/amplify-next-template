@@ -7,6 +7,10 @@ export const storage = defineStorage({
     'minutes/*': [
       allow.authenticated.to(['list']),
     ],
+    // プライベートフォルダのルートへのアクセス権限
+    'minutes/private/*': [
+      allow.authenticated.to(['list', 'write']),
+    ],
     // ユーザーごとのプライベートフォルダ
     'minutes/private/${user.sub}/*': [
       allow.authenticated.to(['get', 'write', 'delete', 'list']),
