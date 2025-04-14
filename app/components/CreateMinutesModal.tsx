@@ -16,6 +16,7 @@ export default function CreateMinutesModal({ onClose, onCreateComplete }: Create
     const [content, setContent] = useState('');
     const [isShared, setIsShared] = useState(false);
     const [isSaving, setIsSaving] = useState(false);
+    const [debugInfo, setDebugInfo] = useState<string>(''); // デバッグ情報を保存するためのステート
     
     // フォームの入力状態を監視
     const isFormValid = title.trim() !== '' && content.trim() !== '';
@@ -27,6 +28,7 @@ export default function CreateMinutesModal({ onClose, onCreateComplete }: Create
         }
 
         setIsSaving(true);
+        setDebugInfo(''); // デバッグ情報をクリア
 
         try {
             // 現在のユーザー情報を取得
@@ -44,18 +46,48 @@ export default function CreateMinutesModal({ onClose, onCreateComplete }: Create
                 ? `minutes/shared/${fileName}`
                 : `minutes/private/${userSub}/${fileName}`;
             
+            // デバッグ情報を出力
+            const debugDetails = `
+            アップロード情報:
+            - ファイルパス: ${filePath}
+            - ユーザーSUB: ${userSub}
+            - ユーザーID: ${currentUser.userId}
+            - 属性情報: ${JSON.stringify(userAttributes, null, 2)}
+            `;
+            
+            console.log(debugDetails);
+            setDebugInfo(debugDetails); // デバッグ情報をテキストファイルとして保存
+            
             console.log('Uploading file to:', filePath);
             console.log('User sub:', userSub);
             console.log('User ID from getCurrentUser:', currentUser.userId);
             console.log('All user attributes:', JSON.stringify(userAttributes, null, 2));
             
+            // 非共有ファイルならテストパスを使用（デバッグ用）
+            if (!isShared) {
+                // テスト用に書き込み権限のあるパスに書き込む
+                console.log('Trying to upload to shared folder as a test');
+                await uploadData({
+                    data: new Blob(['Test content'], { type: 'text/plain' }),
+                    path: `minutes/shared/test_debug_${Date.now()}.txt`
+                }).result;
+                console.log('Test upload to shared folder successful');
+            } // デバッグ用ここまで
+            
             // テキストファイルとして保存
             const textBlob = new Blob([content], { type: 'text/plain' });
             
-            await uploadData({
-                data: textBlob,
-                path: filePath
-            }).result;
+            try {
+                await uploadData({
+                    data: textBlob,
+                    path: filePath
+                }).result;
+                console.log('Upload successful to:', filePath);
+            } catch (uploadError) {
+                console.error('Upload failed:', uploadError);
+                setDebugInfo(prev => prev + '\n\nアップロードエラー: ' + JSON.stringify(uploadError));
+                throw uploadError;
+            }
             
             // ファイルの保存が確実に完了するまで待機
             await new Promise(resolve => setTimeout(resolve, 1000));
@@ -68,6 +100,7 @@ export default function CreateMinutesModal({ onClose, onCreateComplete }: Create
         } catch (error) {
             console.error('Error creating minutes:', error);
             const errorMessage = error instanceof Error ? error.message : String(error);
+            setDebugInfo(prev => prev + '\n\n最終エラー: ' + errorMessage);
             alert(`議事録の作成に失敗しました。\nエラー: ${errorMessage}`);
         } finally {
             setIsSaving(false);
@@ -109,6 +142,12 @@ export default function CreateMinutesModal({ onClose, onCreateComplete }: Create
                         />
                         <label htmlFor="isShared">全員と共有する</label>
                     </div>
+                    
+                    {debugInfo && (
+                        <div className="debug-info" style={{fontSize: '12px', fontFamily: 'monospace', whiteSpace: 'pre-wrap', maxHeight: '150px', overflow: 'auto', backgroundColor: '#f5f5f5', padding: '8px', marginTop: '10px', border: '1px solid #ddd'}}>
+                            {debugInfo}
+                        </div>
+                    )}
                 </div>
                 <div className="modal-footer">
                     <Button

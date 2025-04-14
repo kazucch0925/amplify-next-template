@@ -12,7 +12,7 @@ export const storage = defineStorage({
       allow.authenticated.to(['get', 'write', 'delete', 'list']),
     ],
     // ユーザーごとのプライベートフォルダ
-    'minutes/private/{user.sub}/*': [
+    'minutes/private/${user.sub}/*': [
       allow.authenticated.to(['get', 'write', 'delete', 'list']),
     ]
   })
