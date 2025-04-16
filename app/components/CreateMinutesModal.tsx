@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import { uploadData } from 'aws-amplify/storage';
-import { getCurrentUser, fetchUserAttributes } from 'aws-amplify/auth';
+import { getCurrentUser, fetchUserAttributes, fetchAuthSession } from 'aws-amplify/auth';
 import Button from './Button';
 import './CreateMinutesModal.css';
 
@@ -28,29 +28,32 @@ export default function CreateMinutesModal({ onClose, onCreateComplete }: Create
         }
 
         setIsSaving(true);
-        setDebugInfo(''); // デバッグ情報をクリア
+        setDebugInfo('');
 
         try {
             // 現在のユーザー情報を取得
             const currentUser = await getCurrentUser();
             const userAttributes = await fetchUserAttributes();
-            
-            // Cognitoの標準ユーザー識別子 - subを使用
-            const userSub = userAttributes.sub;
-            
+            const session = await fetchAuthSession();
+            const identityId = session.identityId;
+
+            if (!identityId) {
+                throw new Error('Could not get identity ID.');
+            }
+
             // タイトルから有効なファイル名を生成
             const fileName = `${title.replace(/[^a-z0-9]/gi, '_').toLowerCase()}_${Date.now()}.txt`;
             
             // ファイルの保存先を決定（プライベートか共有か）
             const filePath = isShared
                 ? `minutes/shared/${fileName}`
-                : `minutes/private/${userSub}/${fileName}`;
+                : `minutes/private/${identityId}/${fileName}`;
             
             // デバッグ情報を出力
             const debugDetails = `
             アップロード情報:
             - ファイルパス: ${filePath}
-            - ユーザーSUB: ${userSub}
+            - Identity ID: ${identityId}
             - ユーザーID: ${currentUser.userId}
             - 属性情報: ${JSON.stringify(userAttributes, null, 2)}
             `;
@@ -59,7 +62,7 @@ export default function CreateMinutesModal({ onClose, onCreateComplete }: Create
             setDebugInfo(debugDetails); // デバッグ情報をテキストファイルとして保存
             
             console.log('Uploading file to:', filePath);
-            console.log('User sub:', userSub);
+            console.log('Identity ID:', identityId);
             console.log('User ID from getCurrentUser:', currentUser.userId);
             console.log('All user attributes:', JSON.stringify(userAttributes, null, 2));
             
