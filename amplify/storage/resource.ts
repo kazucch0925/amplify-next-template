@@ -11,8 +11,8 @@ export const storage = defineStorage({
     'minutes/shared/*': [
       allow.authenticated.to(['get', 'write', 'delete', 'list']),
     ],
-    // ユーザーごとのプライベートフォルダ
-    'minutes/private/${user.sub}/*': [
+    // ユーザーごとのプライベートフォルダ (Identity Pool ID を使用)
+    'minutes/private/${cognito-identity.amazonaws.com:sub}/*': [
       allow.authenticated.to(['get', 'write', 'delete', 'list']),
     ]
   })
