@@ -4,7 +4,7 @@
 import React, { useEffect, useState } from 'react';
 import { list, ListAllWithPathOutput, downloadData, remove } from 'aws-amplify/storage';
 import './MinutesTable.css';
-import { getCurrentUser, fetchUserAttributes } from 'aws-amplify/auth';
+import { getCurrentUser, fetchUserAttributes, fetchAuthSession } from 'aws-amplify/auth';
 
 type StorageListOutput = ListAllWithPathOutput['items'];
 
@@ -40,21 +40,24 @@ export default function MinutesTable({ tableKey, searchKeyword = '', onSelectMin
 
   useEffect(() => {
     const fetchData = async () => {
+      setIsLoading(true);
+      setError(null);
       try {
-        // 現在のユーザー情報を取得
         const currentUser = await getCurrentUser();
         const userAttributes = await fetchUserAttributes();
-          
-        // Cognitoの標準ユーザー識別子 - subを使用
-        const userSub = userAttributes.sub;
+        const session = await fetchAuthSession();
+        const identityId = session.identityId;
 
-        // ユーザーのプライベートフォルダまたは共有フォルダのパスを指定
+        if (!identityId) {
+          throw new Error('Could not get identity ID.');
+        }
+          
         const path = viewMode === 'private' 
-          ? `minutes/private/${userSub}/` 
+          ? `minutes/private/${identityId}/`
           : 'minutes/shared/';
           
         console.log('Fetching minutes from path:', path);
-        console.log('User sub:', userSub);
+        console.log('Identity ID:', identityId);
         console.log('User ID from getCurrentUser:', currentUser.userId);
 
         const result = await list({
@@ -69,7 +72,17 @@ export default function MinutesTable({ tableKey, searchKeyword = '', onSelectMin
         const filteredItems = result.items.filter(item => !item.path.endsWith('/'));
         const sortedMinutes = sortMinutesByDate(filteredItems);
         setAllMinutes(sortedMinutes);
-        setFilteredMinutes(sortedMinutes);
+        if (searchKeyword) {
+          const keyword = searchKeyword.toLowerCase();
+          const filtered = sortedMinutes.filter(minute => {
+            const fileName = minute.path.split('/').pop()?.toLowerCase() || '';
+            return fileName.includes(keyword);
+          });
+          setFilteredMinutes(filtered);
+        } else {
+          setFilteredMinutes(sortedMinutes);
+        }
+
       } catch (error) {
         console.error("Error fetching minutes:", error);
         setError("議事録の取得中にエラーが発生しました。ネットワーク接続を確認してください。");
@@ -79,7 +92,7 @@ export default function MinutesTable({ tableKey, searchKeyword = '', onSelectMin
     };
 
     fetchData();
-  }, [tableKey, retryCount, viewMode]);
+  }, [tableKey, retryCount, viewMode, searchKeyword]);
 
   // データ取得を再試行する関数
   const handleRetry = () => {
